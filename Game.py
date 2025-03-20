@@ -24,7 +24,7 @@ class Game:
         self.board = [[0 for _ in range(8)] for _ in range(8)]
         self.game_over = False
         self.turn_player = 'B'
-        # str([x, y]) : Check instance
+        # checks_list = { str([x, y]) : Check instance }
         # Can act as following:
         # keys() = list of checks' position, values() = list of actual pieces
         self.checks_list = dict()
@@ -53,6 +53,8 @@ class Game:
                 else:
                     print("|" + self.board[y][x] + "|", end="")
             print()
+        
+        print(f"It is {self.turn_player}'s turn.\n")
     
     # Method to move check in any location.
     # Used to debug and test.
@@ -87,8 +89,6 @@ class Game:
         atk_check_dict = dict()
         for check in self.checks_list.values():
             if check.side == self.turn_player:
-                # TODO: Separate method for each checks to check the targets
-                # It is to re-use the method in attack() method.
                 targets = self.find_targets(str(check.pos))
                 if targets:
                     try:
@@ -100,15 +100,20 @@ class Game:
         return atk_check_dict
 
     # Parameter: Dictionary that is result of get_atk_dict, Boolean to check player has already attacked
-    def attack(self, atk_dict, alreadyAtked):
+    def attack(self, atk_dict, *alreadyAtked):
+        # TODO: Make attack() method recusive to keep attacking if possible
+        if (not atk_dict):
+            return
+        
         if (not alreadyAtked):
+            atking_list = list(atk_dict.keys())
             print("Attackable checks are:")
-            for pos in atk_dict.keys():
-                print(pos, end="  ")
+            for i in range(len(atking_list)):
+                print(f"{i}: {atking_list[i]}")
             
             print("Choose which one to start attack(Input nth): ", end="")
             atkPosNum = int(input())
-            atkPos = atk_dict.keys()[atkPosNum]
+            atkPos = atking_list[atkPosNum]
 
         # If attacker has one and only target, choose it automatically
         if len(atk_dict[atkPos]) == 1:
@@ -125,32 +130,39 @@ class Game:
             targetPos = atk_dict[atkPos][targetPosNum]
         
 
-        print(f"Check in position {atkPos} attacks {targetPos}")
+        print(f"Check in position {atkPos} attacks {targetPos}.")
+        # Move attacker's position
+        for possible_move in self.checks_list[atkPos].moves:
+            if str([self.checks_list[atkPos].pos[i] + possible_move[i] for i in range(2)]) == targetPos:
+                movePos = [self.checks_list[atkPos].pos[i] + 2*possible_move[i] for i in range(2)]
+                break
+
+        self.checks_list[str(movePos)] = self.checks_list.pop(atkPos)
+        self.checks_list[str(movePos)].pos = movePos
         # Call captured() method of target and delete it
         self.checks_list.pop(targetPos).captured()
 
     # Parameter: str(Position of attacker)
     def find_targets(self, checkPos):
         check = self.checks_list[checkPos]
+        target_list = list()
         for posible_move in check.moves:
-            pos_atk = str([check.pos[i] + posible_move[i] for i in range(2)])
+            pos_atked = str([check.pos[i] + posible_move[i] for i in range(2)])
             try:
-                # check if there is an enemy check in pos_atk
-                # and the position across the enemy is empty
-                if (self.checks_list[pos_atk].side != check.side) \
-                and (self.board[check.pos[1] + 2*posible_move[1]][check.pos[0] + 2*posible_move[0]] == 0):
-                    try:
-                        target_list.append(pos_atk)
-                    except:
-                        target_list = [pos_atk]
+                # Check if there is an enemy check in pos_atked
+                # and the position across the enemy is empty or out of bound
+                if (self.checks_list[pos_atked].side != check.side) \
+                and (self.board[check.pos[1] + 2*posible_move[1]][check.pos[0] + 2*posible_move[0]] == 0) \
+                and (0 <= check.pos[0] + 2*posible_move[0] <= 7) and (0 <= check.pos[1] + 2*posible_move[1] <= 7):
+                    target_list.append(pos_atked)
             except:
                 pass
 
-            # Return list of str(position of target)
-            try:
-                return target_list
-            except:
-                return
+        # Return list of str(position of target)
+        try:
+            return target_list
+        except:
+            return
         
 
     def promote(self, pos_target):
