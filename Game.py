@@ -67,7 +67,7 @@ class Game:
     # Method to move check in any location.
     # Used to debug and test.
     def move_debug(self):
-        print("Initiate debug move. If you want to skip this turn, enter -1.")
+        print("Initiate debug move. If you want to skip this turn, enter SKIP.")
         try:
             pos_start = str(list(map(int, input("Position of check you want to move (input as x,y): ").split(","))))
             pos_target = list(map(int, input("Position of tile you want to move to (input as x,y): ").split(",")))
