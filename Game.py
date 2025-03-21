@@ -56,6 +56,7 @@ class Game:
         
         print(f"It is {self.turn_player}'s turn.\n")
     
+    #%% move_debug method.
     # Method to move check in any location.
     # Used to debug and test.
     def move_debug(self):
@@ -69,7 +70,7 @@ class Game:
             sleep(0.5)
 
             # Promotion : Create a King in the same position and delete original Check
-            # TODO : Need to be moved into promote() method
+            # TODO : Need to be separated into promote() method
             if (self.checks_list[pos_start].side == "B" and self.checks_list[pos_start].pos[1] == 7) or (self.checks_list[pos_start].side == "W" and self.checks_list[pos_start].pos[1] == 0):
 
                 self.checks_list[pos_start] = King(self.checks_list[pos_start].pos, self.checks_list[pos_start].side)
@@ -81,11 +82,11 @@ class Game:
         
         print("There is no check in start position.\n")
         return
-    
-    def get_atk_dict(self):
+    #%% get_atk_dict() method.
     # Find if there is any piece attacking another piece
-    # Returns Dictionary as following:
-    # str(Position of attacker): [list of str(target position)]
+    def get_atk_dict(self):
+        # Returns Dictionary as following:
+        # { str(Position of attacker): [list of str(target position)] }
         atk_check_dict = dict()
         for check in self.checks_list.values():
             if check.side == self.turn_player:
@@ -98,15 +99,15 @@ class Game:
                         atk_check_dict[(str(check.pos))] = targets
         
         return atk_check_dict
-
+    #%% attack() method.
     # Parameter: Dictionary that is result of get_atk_dict, Boolean to check player has already attacked
     def attack(self, atk_dict, *alreadyAtked):
         # TODO: Make attack() method recusive to keep attacking if possible
-        if (not atk_dict):
-            return
         
+        # get attackers list from atk_dict
+        atking_list = list(atk_dict.keys())
+        # if it is first attack, choose which one to attack
         if (not alreadyAtked):
-            atking_list = list(atk_dict.keys())
             print("Attackable checks are:")
             for i in range(len(atking_list)):
                 print(f"{i}: {atking_list[i]}")
@@ -114,11 +115,13 @@ class Game:
             print("Choose which one to start attack(Input nth): ", end="")
             atkPosNum = int(input())
             atkPos = atking_list[atkPosNum]
+        # if already attacked, attacker is automatically set
+        else:
+            atkPos = list(atk_dict.keys())[0]
 
         # If attacker has one and only target, choose it automatically
         if len(atk_dict[atkPos]) == 1:
             targetPos = atk_dict[atkPos][0]
-        
         #If attacker has multiple targets, choose which one to attack
         else:
             print("This attacker has following targets: ")
@@ -142,6 +145,16 @@ class Game:
         # Call captured() method of target and delete it
         self.checks_list.pop(targetPos).captured()
 
+        # return attack() until there is no attacking check.
+        # Here, call find_targets(position of attacker) to find if there is more target be able to attack.
+        more_targets = self.find_targets(str(movePos))
+        if more_targets:
+            return self.attack({str(movePos): more_targets}, True)
+        else:
+            return
+            
+
+    #%% find_targets() method.
     # Parameter: str(Position of attacker)
     def find_targets(self, checkPos):
         check = self.checks_list[checkPos]
@@ -158,11 +171,11 @@ class Game:
             except:
                 pass
 
-        # Return list of str(position of target)
-        try:
+        # Return [list of str(position of target)]
+        if target_list:
             return target_list
-        except:
-            return
+        else:
+            return None
         
 
     def promote(self, pos_target):
