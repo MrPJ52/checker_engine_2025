@@ -30,22 +30,23 @@ class Game:
         self.checks_list = dict()
 
         # Create Checks for normal games
-        # for x in range(0, 8, 2):
-        #     for y in range(3):
-        #         self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
+        for x in range(0, 8, 2):
+            for y in range(3):
+                self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
         
-        # for x in range(0, 8, 2):
-        #     for y in range(3):
-        #         self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
+        for x in range(0, 8, 2):
+            for y in range(3):
+                self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
         
         # Create Checks for debugging
-        self.checks_list[str([1, 0])] = Check([1, 0], "B")
-        self.checks_list[str([5, 0])] = Check([5, 0], "B")
-        self.checks_list[str([2, 7])] = Check([2, 7], "W")
-        self.checks_list[str([6, 7])] = Check([6, 7], "W")
+        # self.checks_list[str([1, 0])] = Check([1, 0], "B")
+        # self.checks_list[str([5, 0])] = Check([5, 0], "B")
+        # self.checks_list[str([2, 7])] = Check([2, 7], "W")
+        # self.checks_list[str([6, 7])] = Check([6, 7], "W")
 
     
     #%% print_board() method.
+    # print board through console.
     def print_board(self):
         self.board = [[0 for _ in range(8)] for _ in range(8)]
         for piece in self.checks_list.values():
@@ -91,7 +92,11 @@ class Game:
         print("There is no check in start position.\n")
         return
 
+    # TODO: there was an error about attack algorithm.
+    # After move_debug(), one attackable check ignored it.
+    # Couldn't find the reason, but might be fixed later.
     #%% find_targets() method.
+    # Find if a check has attacking target.
     # Parameter: str(Position of attacker)
     def find_targets(self, checkPos):
         check = self.checks_list[checkPos]
@@ -115,7 +120,7 @@ class Game:
             return None
     
     #%% get_atk_dict() method.
-    # Find if there is any piece attacking another piece
+    # Find if there is any piece attacking another piece.
     def get_atk_dict(self):
         # Returns Dictionary as following:
         # { str(Position of attacker): [list of str(target position)] }
@@ -230,6 +235,7 @@ class Game:
             return None
 
     #%% move() method.
+    # Find a movable place for a check.
     # Parameter: return of get_move_dict()
     def move(self, movable_dict):
         #if there is no move possible, end the game
@@ -277,8 +283,8 @@ class Game:
     
     
     #%% check_promotion() method.
+    # Find whether the check has to promote.
     # Parameter: str(position of check)
-    # Find whether the check has to promote
     def check_promotion(self, checkPos):
         if (self.checks_list[checkPos].side == "B" and self.checks_list[checkPos].pos[1] == 7) \
             or (self.checks_list[checkPos].side == "W" and self.checks_list[checkPos].pos[1] == 0):
