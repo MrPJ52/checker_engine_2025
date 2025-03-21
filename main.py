@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter_GUI import CheckersGUI
 
+#%% Run main
 # Create Tk() window
 root = tk.Tk()
 # Create CheckersGUI instance with argument "root"

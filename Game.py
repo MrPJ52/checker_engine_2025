@@ -17,7 +17,7 @@ y
 
 '''
 
-
+#%% Game class: overall game system of checker.
 class Game:
     # initial setting
     def __init__(self):
@@ -91,6 +91,29 @@ class Game:
         print("There is no check in start position.\n")
         return
 
+    #%% find_targets() method.
+    # Parameter: str(Position of attacker)
+    def find_targets(self, checkPos):
+        check = self.checks_list[checkPos]
+        target_list = list()
+        for posible_move in check.moves:
+            pos_atked = str([check.pos[i] + posible_move[i] for i in range(2)])
+            try:
+                # Check if there is an enemy check in pos_atked
+                # and the position across the enemy is empty or out of bound
+                if (self.checks_list[pos_atked].side != check.side) \
+                and (self.board[check.pos[1] + 2*posible_move[1]][check.pos[0] + 2*posible_move[0]] == 0) \
+                and (0 <= check.pos[0] + 2*posible_move[0] <= 7) and (0 <= check.pos[1] + 2*posible_move[1] <= 7):
+                    target_list.append(pos_atked)
+            except:
+                pass
+
+        # Return [list of str(position of target)]
+        if target_list:
+            return target_list
+        else:
+            return None
+    
     #%% get_atk_dict() method.
     # Find if there is any piece attacking another piece
     def get_atk_dict(self):
@@ -126,6 +149,8 @@ class Game:
         # if already attacked, attacker is automatically set
         else:
             atkPos = list(atk_dict.keys())[0]
+        
+        sleep(1)
 
         # If attacker has one and only target, choose it automatically
         if len(atk_dict[atkPos]) == 1:
@@ -142,6 +167,8 @@ class Game:
         
 
         print(f"Check in position {atkPos} attacks {targetPos}.")
+        sleep(0.5)
+
         # Move attacker's position
         for possible_move in self.checks_list[atkPos].moves:
             if str([self.checks_list[atkPos].pos[i] + possible_move[i] for i in range(2)]) == targetPos:
@@ -154,9 +181,11 @@ class Game:
         # Call captured() method of target and delete it
         self.checks_list.pop(targetPos).captured()
 
+        sleep(1)
+
         # print board so that user can notice how that moved
-        self.print_board()
-        sleep(0.5)
+        # self.print_board()
+        # sleep(0.5)
 
         # check if the attacker has to be promoted
         # if promoted, end attack()
@@ -172,30 +201,34 @@ class Game:
         else:
             return
             
+    #%% find_moves() method.
+    def get_move_dict(self):
+        # Find movable checks
+        # dictionary as following:
+        # { str(movable checks' position) : [list of movable blanks] }
+        mover_check_dict = dict()
+        for check in self.checks_list.values():
+            if check.side == self.turn_player:
+                # Check all possible moves
+                for posible_move in check.moves:
+                    pos_move = [check.pos[i] + posible_move[i] for i in range(2)]
+                    try:
+                        # Check if pos_move is empty and not out of bound
+                        if (not (str(pos_move) in self.checks_list.keys() )) \
+                        and (0 <= check.pos[0] + posible_move[0] <= 7) and (0 <= check.pos[1] + posible_move[1] <= 7):
+                            try:
+                                mover_check_dict[(str(check.pos))].append(pos_move)
+                            except:
+                                mover_check_dict[(str(check.pos))] = [pos_move]
 
-    #%% find_targets() method.
-    # Parameter: str(Position of attacker)
-    def find_targets(self, checkPos):
-        check = self.checks_list[checkPos]
-        target_list = list()
-        for posible_move in check.moves:
-            pos_atked = str([check.pos[i] + posible_move[i] for i in range(2)])
-            try:
-                # Check if there is an enemy check in pos_atked
-                # and the position across the enemy is empty or out of bound
-                if (self.checks_list[pos_atked].side != check.side) \
-                and (self.board[check.pos[1] + 2*posible_move[1]][check.pos[0] + 2*posible_move[0]] == 0) \
-                and (0 <= check.pos[0] + 2*posible_move[0] <= 7) and (0 <= check.pos[1] + 2*posible_move[1] <= 7):
-                    target_list.append(pos_atked)
-            except:
-                pass
-
-        # Return [list of str(position of target)]
-        if target_list:
-            return target_list
+                    except:
+                        pass
+        
+        if mover_check_dict:
+            return mover_check_dict
         else:
             return None
-        
+
     #%% move() method.
     # Parameter: return of get_move_dict()
     def move(self, movable_dict):
@@ -242,34 +275,7 @@ class Game:
 
         return
     
-    #%% find_moves() method.
-    def get_move_dict(self):
-        # Find movable checks
-        # dictionary as following:
-        # { str(movable checks' position) : [list of movable blanks] }
-        mover_check_dict = dict()
-        for check in self.checks_list.values():
-            if check.side == self.turn_player:
-                # Check all possible moves
-                for posible_move in check.moves:
-                    pos_move = [check.pos[i] + posible_move[i] for i in range(2)]
-                    try:
-                        # Check if pos_move is empty and not out of bound
-                        if (not (str(pos_move) in self.checks_list.keys() )) \
-                        and (0 <= check.pos[0] + posible_move[0] <= 7) and (0 <= check.pos[1] + posible_move[1] <= 7):
-                            try:
-                                mover_check_dict[(str(check.pos))].append(pos_move)
-                            except:
-                                mover_check_dict[(str(check.pos))] = [pos_move]
-
-                    except:
-                        pass
-        
-        if mover_check_dict:
-            return mover_check_dict
-        else:
-            return None
-
+    
     #%% check_promotion() method.
     # Parameter: str(position of check)
     # Find whether the check has to promote
@@ -280,7 +286,6 @@ class Game:
             self.checks_list[checkPos] = King(self.checks_list[checkPos].pos, self.checks_list[checkPos].side)
             # if promoted, return True so that other method can notice
             return True
-
 
     #%% game_over() method.
     def game_over(self):

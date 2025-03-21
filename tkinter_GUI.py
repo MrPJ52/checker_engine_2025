@@ -1,6 +1,7 @@
 import tkinter as tk
 import Game
 
+#%% CheckersGUI class: Overall system including game system and GUI control.
 class CheckersGUI:
     def __init__(self, root):
         # Create tkinter instance to open a window, initial setting
@@ -63,7 +64,7 @@ class CheckersGUI:
                                     (x + 2) * tile_size - 10, (y + 3) * tile_size - 10,
                                     fill=color, outline="white", tags="pieces")
             if piece.notation[1] == "K":
-                self.canvas.create_text((x + 1) * tile_size + 27, (y + 2) * tile_size + 25,
+                self.canvas.create_text((x + 1) * tile_size + 26, (y + 2) * tile_size + 25,
                                     font = ("Arial", 10), fill = "white", text = piece.notation, tags="pieces")
     
 
