@@ -30,21 +30,22 @@ class Game:
         self.checks_list = dict()
 
         # Create Checks for normal games
-        for x in range(0, 8, 2):
-            for y in range(3):
-                self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
+        # for x in range(0, 8, 2):
+        #     for y in range(3):
+        #         self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
         
-        for x in range(0, 8, 2):
-            for y in range(3):
-                self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
+        # for x in range(0, 8, 2):
+        #     for y in range(3):
+        #         self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
         
         # Create Checks for debugging
-        # self.checks_list[str([1, 0])] = Check([1, 0], "B")
-        # self.checks_list[str([5, 0])] = Check([5, 0], "B")
-        # self.checks_list[str([2, 7])] = Check([2, 7], "W")
-        # self.checks_list[str([6, 7])] = Check([6, 7], "W")
+        self.checks_list[str([1, 0])] = Check([1, 0], "B")
+        self.checks_list[str([5, 0])] = Check([5, 0], "B")
+        self.checks_list[str([2, 7])] = Check([2, 7], "W")
+        self.checks_list[str([6, 7])] = Check([6, 7], "W")
 
     
+    #%% print_board() method.
     def print_board(self):
         self.board = [[0 for _ in range(8)] for _ in range(8)]
         for piece in self.checks_list.values():
@@ -82,6 +83,8 @@ class Game:
 
             # Delete original_position:check and add new_position:check
             self.checks_list[str(pos_target)] = self.checks_list.pop(pos_start)
+            # Check if it is promoted
+            self.check_promotion(str(pos_target))
             # if moved, end the method
             return
         
@@ -115,7 +118,7 @@ class Game:
         if (not alreadyAtked):
             print("Attackable checks are:")
             for i in range(len(atking_list)):
-                print(f"{i}: {atking_list[i]}")
+                print(f"{i}: {atking_list[i]} -> {atk_dict[atking_list[i]]}")
             
             print("Choose which one to start attack(Input nth): ", end="")
             atkPosNum = int(input())
