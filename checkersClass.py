@@ -1,5 +1,5 @@
 class Check:
-    def __init__(self, Pos, Side): #체커의 위치와 편을 인수로 받음
+    def __init__(self, Pos, Side): # Parameter: [position as x, y], side
         self.pos = Pos #[x, y]
         self.side = Side
         if self.side == "B":

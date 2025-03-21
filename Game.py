@@ -22,21 +22,28 @@ class Game:
     # initial setting
     def __init__(self):
         self.board = [[0 for _ in range(8)] for _ in range(8)]
-        self.game_over = False
+        self.game_is_over = False
         self.turn_player = 'B'
         # checks_list = { str([x, y]) : Check instance }
         # Can act as following:
         # keys() = list of checks' position, values() = list of actual pieces
         self.checks_list = dict()
 
-        #Create Checks
+        # Create Checks for normal games
         for x in range(0, 8, 2):
             for y in range(3):
                 self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
         
         for x in range(0, 8, 2):
             for y in range(3):
-                self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")    
+                self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
+        
+        # Create Checks for debugging
+        # self.checks_list[str([1, 0])] = Check([1, 0], "B")
+        # self.checks_list[str([5, 0])] = Check([5, 0], "B")
+        # self.checks_list[str([2, 7])] = Check([2, 7], "W")
+        # self.checks_list[str([6, 7])] = Check([6, 7], "W")
+
     
     def print_board(self):
         self.board = [[0 for _ in range(8)] for _ in range(8)]
@@ -60,20 +67,18 @@ class Game:
     # Method to move check in any location.
     # Used to debug and test.
     def move_debug(self):
-        pos_start = str(list(map(int, input("Position of check you want to move (input as x,y): ").split(","))))
-        pos_target = list(map(int, input("Position of tile you want to move to (input as x,y): ").split(",")))
+        print("Initiate debug move. If you want to skip this turn, enter -1.")
+        try:
+            pos_start = str(list(map(int, input("Position of check you want to move (input as x,y): ").split(","))))
+            pos_target = list(map(int, input("Position of tile you want to move to (input as x,y): ").split(",")))
+        except:
+            return
 
         # Find check in start position
         if pos_start in self.checks_list.keys():
             self.checks_list[pos_start].move(pos_target)
             
             sleep(0.5)
-
-            # Promotion : Create a King in the same position and delete original Check
-            # TODO : Need to be separated into promote() method
-            if (self.checks_list[pos_start].side == "B" and self.checks_list[pos_start].pos[1] == 7) \
-                or (self.checks_list[pos_start].side == "W" and self.checks_list[pos_start].pos[1] == 0):
-                self.checks_list[pos_start] = King(self.checks_list[pos_start].pos, self.checks_list[pos_start].side)
 
             # Delete original_position:check and add new_position:check
             self.checks_list[str(pos_target)] = self.checks_list.pop(pos_start)
@@ -228,7 +233,6 @@ class Game:
         # move the check
         self.checks_list[moverPos].move(movingPos)
         self.checks_list[str(movingPos)] = self.checks_list.pop(moverPos)
-        self.checks_list[str(movingPos)].pos = movingPos
 
         # check if the mover has to be promoted
         self.check_promotion(str(movingPos))
@@ -263,12 +267,6 @@ class Game:
         else:
             return None
 
-    #%% game_over() method.
-    def game_over(self):
-        print(f"There is no check left or possible moves for {self.turn_player}.\n")
-        self.game_over = True
-        return
-
     #%% check_promotion() method.
     # Parameter: str(position of check)
     # Find whether the check has to promote
@@ -279,5 +277,14 @@ class Game:
             self.checks_list[checkPos] = King(self.checks_list[checkPos].pos, self.checks_list[checkPos].side)
             # if promoted, return True so that other method can notice
             return True
-        
-        return False
+
+
+    #%% game_over() method.
+    def game_over(self):
+        self.game_is_over = True
+        print(f"There is no check left or possible moves for {self.turn_player}.\n")
+        winner = "B" if (self.turn_player == "W") else "W"
+
+        print(f"\n{winner} winned!\n")
+
+        return

@@ -29,3 +29,5 @@ while True:
     # Change turn player
     GameController.turn_player = 'W' if GameController.turn_player == 'B' else 'B'
     sleep(0.5)
+
+print("\nShut down Checker engine.\n")
