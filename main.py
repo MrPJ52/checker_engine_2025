@@ -12,23 +12,20 @@ while True:
     attackable_dict = GameController.get_atk_dict()
     if attackable_dict:
         GameController.attack(attackable_dict)
-        print(GameController.get_atk_dict())
         
     # If there is not,
     # Find if there is any movable checks
     else:
-    # If there is no movable checks,
-    # Turn player is defeated, end game
-    # TODO: Create method to make player win or lose.
+        # If there is no movable checks,
+        # Turn player is defeated, end game
+        movable_dict = GameController.get_move_dict()
+        if not(movable_dict):
+            GameController.game_over()
+            break
 
-    # If there is movable checks, move
-        GameController.move_debug()
+        # If there is movable checks, move
+        GameController.move(movable_dict)
 
     # Change turn player
     GameController.turn_player = 'W' if GameController.turn_player == 'B' else 'B'
     sleep(0.5)
-
-    # try:
-    #     del GameController.checks_list[order]
-    # except:
-    #     print("Out of range.\n")

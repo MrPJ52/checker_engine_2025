@@ -9,12 +9,11 @@ class Check:
         self.notation = self.side + "M"
     
     def captured(self):
-        print("\nCheck in position" + str(self.pos) + " is captured.\n")
+        print(f"Check in position {str(self.pos)}, {self.side} is captured.\n")
     
     def move(self, Target):
         print(f"{self.pos} moved to {Target} .\n")
         self.pos = Target
-
 
 
 class King(Check):

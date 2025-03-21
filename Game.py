@@ -71,8 +71,8 @@ class Game:
 
             # Promotion : Create a King in the same position and delete original Check
             # TODO : Need to be separated into promote() method
-            if (self.checks_list[pos_start].side == "B" and self.checks_list[pos_start].pos[1] == 7) or (self.checks_list[pos_start].side == "W" and self.checks_list[pos_start].pos[1] == 0):
-
+            if (self.checks_list[pos_start].side == "B" and self.checks_list[pos_start].pos[1] == 7) \
+                or (self.checks_list[pos_start].side == "W" and self.checks_list[pos_start].pos[1] == 0):
                 self.checks_list[pos_start] = King(self.checks_list[pos_start].pos, self.checks_list[pos_start].side)
 
             # Delete original_position:check and add new_position:check
@@ -82,6 +82,7 @@ class Game:
         
         print("There is no check in start position.\n")
         return
+
     #%% get_atk_dict() method.
     # Find if there is any piece attacking another piece
     def get_atk_dict(self):
@@ -99,11 +100,10 @@ class Game:
                         atk_check_dict[(str(check.pos))] = targets
         
         return atk_check_dict
+    
     #%% attack() method.
     # Parameter: Dictionary that is result of get_atk_dict, Boolean to check player has already attacked
-    def attack(self, atk_dict, *alreadyAtked):
-        # TODO: Make attack() method recusive to keep attacking if possible
-        
+    def attack(self, atk_dict, *alreadyAtked):  
         # get attackers list from atk_dict
         atking_list = list(atk_dict.keys())
         # if it is first attack, choose which one to attack
@@ -125,8 +125,8 @@ class Game:
         #If attacker has multiple targets, choose which one to attack
         else:
             print("This attacker has following targets: ")
-            for targetPos in atk_dict[atkPos]:
-                print(targetPos, end="  ")
+            for i in range(len(atk_dict[atkPos])):
+                print(f"{i}: {atk_dict[atkPos][i]}")
             print("Choose the target(Input nth): ", end = "")
 
             targetPosNum = int(input())
@@ -142,11 +142,22 @@ class Game:
 
         self.checks_list[str(movePos)] = self.checks_list.pop(atkPos)
         self.checks_list[str(movePos)].pos = movePos
+        print(f"Attacker has moved into {str(movePos)}.")
         # Call captured() method of target and delete it
         self.checks_list.pop(targetPos).captured()
 
-        # return attack() until there is no attacking check.
-        # Here, call find_targets(position of attacker) to find if there is more target be able to attack.
+        # print board so that user can notice how that moved
+        self.print_board()
+        sleep(0.5)
+
+        # check if the attacker has to be promoted
+        # if promoted, end attack()
+        if self.check_promotion(str(movePos)):
+            return
+
+        # call find_targets(position of attacker) to find if there is more target be able to attack.
+        # if target found, return attack({ str(attacker's position) : [list of its targets] }, True)
+        # if no target was found, end attack()
         more_targets = self.find_targets(str(movePos))
         if more_targets:
             return self.attack({str(movePos): more_targets}, True)
@@ -177,6 +188,96 @@ class Game:
         else:
             return None
         
+    #%% move() method.
+    # Parameter: return of get_move_dict()
+    def move(self, movable_dict):
+        #if there is no move possible, end the game
+        if not(movable_dict):
+            self.game_over()
+            return
+        
+        # In the mover_check_dict, choose which one to actually move this time
+        mover_list = list(movable_dict.keys())
+        print("Movable checks are:")
+        for i in range(len(mover_list)):
+            print(f"{i}: {mover_list[i]} -> {movable_dict[mover_list[i]]}")
+            
+        print("Choose which one to move(Input nth): ", end="")
+        moverPosNum = int(input())
 
-    def promote(self, pos_target):
-        pass
+        # if input is -1, call move_debug() and return
+        if (moverPosNum == -1):
+            self.move_debug()
+            return
+        
+        moverPos = mover_list[moverPosNum]
+
+        # If mover has one and only possible move, choose it automatically
+        if len(movable_dict[moverPos]) == 1:
+            movingPos = movable_dict[moverPos][0]
+        #If mover has multiple moves, choose which one to go
+        else:
+            print("This mover has following possible moves: ")
+            for i in range(len(movable_dict[moverPos])):
+                print(f"{i}: {movable_dict[moverPos][i]}")
+            print("Choose the target(Input nth): ", end = "")
+
+            movingPosNum = int(input())
+            movingPos = movable_dict[moverPos][movingPosNum]
+        
+        # move the check
+        self.checks_list[moverPos].move(movingPos)
+        self.checks_list[str(movingPos)] = self.checks_list.pop(moverPos)
+        self.checks_list[str(movingPos)].pos = movingPos
+
+        # check if the mover has to be promoted
+        self.check_promotion(str(movingPos))
+
+        return
+    
+    #%% find_moves() method.
+    def get_move_dict(self):
+        # Find movable checks
+        # dictionary as following:
+        # { str(movable checks' position) : [list of movable blanks] }
+        mover_check_dict = dict()
+        for check in self.checks_list.values():
+            if check.side == self.turn_player:
+                # Check all possible moves
+                for posible_move in check.moves:
+                    pos_move = [check.pos[i] + posible_move[i] for i in range(2)]
+                    try:
+                        # Check if pos_move is empty and not out of bound
+                        if (not (str(pos_move) in self.checks_list.keys() )) \
+                        and (0 <= check.pos[0] + posible_move[0] <= 7) and (0 <= check.pos[1] + posible_move[1] <= 7):
+                            try:
+                                mover_check_dict[(str(check.pos))].append(pos_move)
+                            except:
+                                mover_check_dict[(str(check.pos))] = [pos_move]
+
+                    except:
+                        pass
+        
+        if mover_check_dict:
+            return mover_check_dict
+        else:
+            return None
+
+    #%% game_over() method.
+    def game_over(self):
+        print(f"There is no check left or possible moves for {self.turn_player}.\n")
+        self.game_over = True
+        return
+
+    #%% check_promotion() method.
+    # Parameter: str(position of check)
+    # Find whether the check has to promote
+    def check_promotion(self, checkPos):
+        if (self.checks_list[checkPos].side == "B" and self.checks_list[checkPos].pos[1] == 7) \
+            or (self.checks_list[checkPos].side == "W" and self.checks_list[checkPos].pos[1] == 0):
+            # Promotion : Create a King in the same position and delete original Check
+            self.checks_list[checkPos] = King(self.checks_list[checkPos].pos, self.checks_list[checkPos].side)
+            # if promoted, return True so that other method can notice
+            return True
+        
+        return False
