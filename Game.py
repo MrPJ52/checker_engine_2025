@@ -1,6 +1,5 @@
 from checkersClass import Check, King
 from time import sleep
-import tkinter as tk
 
 '''
 Board index notation
@@ -305,3 +304,4 @@ class Game:
         print(f"\n{winner} winned!\n")
 
         return
+    

@@ -22,5 +22,3 @@ class King(Check):
         self.moves = [[1, 1], [-1, 1], [-1, -1], [1, -1]]
         self.notation = self.side + "K"
         print("Check in position" + str(self.pos) + " has been promoted to King.\n")
-
-##Testing github.
