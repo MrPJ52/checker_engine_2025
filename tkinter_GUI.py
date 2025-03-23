@@ -83,7 +83,7 @@ class CheckersGUI:
         # If there is, attack
         attackable_dict = self.game.get_atk_dict()
         if attackable_dict:
-            self.game.attack(attackable_dict)
+            self.game.attack(attackable_dict, self, False)
         # If there is not,
         # Find if there is any movable checks
         else:

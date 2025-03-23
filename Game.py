@@ -1,5 +1,6 @@
 from checkersClass import Check, King
 from time import sleep
+import tkinter as tk
 
 '''
 Board index notation
@@ -138,8 +139,9 @@ class Game:
         return atk_check_dict
     
     #%% attack() method.
-    # Parameter: Dictionary that is result of get_atk_dict, Boolean to check player has already attacked
-    def attack(self, atk_dict, *alreadyAtked):  
+    # Parameter: Dictionary that is result of get_atk_dict, CheckersGUI object(In tkinter_GUI.py),
+    # and boolean to check player has already attacked
+    def attack(self, atk_dict, GUI, alreadyAtked=False):
         # get attackers list from atk_dict
         atking_list = list(atk_dict.keys())
         # if it is first attack, choose which one to attack
@@ -189,8 +191,8 @@ class Game:
         sleep(1)
 
         # print board so that user can notice how that moved
-        # self.print_board()
-        # sleep(0.5)
+        self.print_board()
+        sleep(0.5)
 
         # check if the attacker has to be promoted
         # if promoted, end attack()
@@ -202,7 +204,8 @@ class Game:
         # if no target was found, end attack()
         more_targets = self.find_targets(str(movePos))
         if more_targets:
-            return self.attack({str(movePos): more_targets}, True)
+            GUI.draw_pieces()
+            return self.attack({str(movePos): more_targets}, GUI, True)
         else:
             return
             
