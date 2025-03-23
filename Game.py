@@ -151,12 +151,16 @@ class Game:
             
             print("Choose which one to start attack(Input nth): ", end="")
             atkPosNum = int(input())
+            # if input is -1, call move_debug() and return
+            if (atkPosNum == -1):
+                self.move_debug()
+                return
             atkPos = atking_list[atkPosNum]
         # if already attacked, attacker is automatically set
         else:
             atkPos = list(atk_dict.keys())[0]
         
-        sleep(1)
+        sleep(0.5)
 
         # If attacker has one and only target, choose it automatically
         if len(atk_dict[atkPos]) == 1:
@@ -184,10 +188,10 @@ class Game:
         self.checks_list[str(movePos)] = self.checks_list.pop(atkPos)
         self.checks_list[str(movePos)].pos = movePos
         print(f"Attacker has moved into {str(movePos)}.")
+        sleep(0.5)
         # Call captured() method of target and delete it
         self.checks_list.pop(targetPos).captured()
-
-        sleep(1)
+        sleep(0.5)
 
         # print board so that user can notice how that moved
         self.print_board()
@@ -204,6 +208,7 @@ class Game:
         more_targets = self.find_targets(str(movePos))
         if more_targets:
             GUI.draw_pieces()
+            sleep(0.5)
             return self.attack({str(movePos): more_targets}, GUI, True)
         else:
             return

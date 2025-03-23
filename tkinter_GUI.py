@@ -99,7 +99,7 @@ class CheckersGUI:
         
         # Change turn player
         self.game.turn_player = 'W' if self.game.turn_player == 'B' else 'B'
-        self.root.after(1000, self.game_loop)
+        self.root.after(500, self.game_loop)
 
 #%% if this file is run directly,
 # Create CheckersGUI instance and run
