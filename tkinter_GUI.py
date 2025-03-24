@@ -83,7 +83,7 @@ class CheckersGUI:
         # If there is, attack
         attackable_dict = self.game.get_atk_dict()
         if attackable_dict:
-            self.game.attack(attackable_dict, self, False)
+            self.game.attack_phase(attackable_dict, self, False)
         # If there is not,
         # Find if there is any movable checks
         else:
@@ -95,7 +95,7 @@ class CheckersGUI:
                 print("\nShut down Checker Engine.\n")
                 return
             # If there is movable checks, move
-            self.game.move(movable_dict)
+            self.game.move_phase(movable_dict)
         
         # Change turn player
         self.game.turn_player = 'W' if self.game.turn_player == 'B' else 'B'

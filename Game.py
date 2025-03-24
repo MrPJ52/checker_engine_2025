@@ -46,7 +46,7 @@ class Game:
 
     
     #%% print_board() method.
-    # print board through console.
+    # Print board through console.
     def print_board(self):
         self.board = [[0 for _ in range(8)] for _ in range(8)]
         for piece in self.checks_list.values():
@@ -78,7 +78,7 @@ class Game:
 
         # Find check in start position
         if pos_start in self.checks_list.keys():
-            self.checks_list[pos_start].move(pos_target)
+            self.checks_list[pos_start].move_phase(pos_target)
             
             sleep(0.5)
 
@@ -137,10 +137,11 @@ class Game:
         
         return atk_check_dict
     
-    #%% attack() method.
+    #%% attack_phase() method.
+    # Proceed attack phase and control it.
     # Parameter: Dictionary that is result of get_atk_dict, CheckersGUI object(In tkinter_GUI.py),
     # and boolean to check player has already attacked
-    def attack(self, atk_dict, GUI, alreadyAtked=False):
+    def attack_phase(self, atk_dict, GUI, alreadyAtked=False):
         # get attackers list from atk_dict
         atking_list = list(atk_dict.keys())
         # if it is first attack, choose which one to attack
@@ -149,7 +150,7 @@ class Game:
             for i in range(len(atking_list)):
                 print(f"{i}: {atking_list[i]} -> {atk_dict[atking_list[i]]}")
             
-            print("Choose which one to start attack(Input nth): ", end="")
+            print("Choose which one to start attack_phase(Input nth): ", end="")
             atkPosNum = int(input())
             # if input is -1, call move_debug() and return
             if (atkPosNum == -1):
@@ -179,6 +180,33 @@ class Game:
         print(f"Check in position {atkPos} attacks {targetPos}.")
         sleep(0.5)
 
+        # Call attack() method and get return value
+        movePos = self.attack(atkPos=atkPos, targetPos=targetPos)
+
+        # print board so that user can notice how that moved
+        self.print_board()
+        sleep(0.5)
+
+        # check if the attacker has to be promoted
+        # if promoted, end attack_phase()
+        if self.check_promotion(str(movePos)):
+            return
+
+        # call find_targets(position of attacker) to find if there is more target be able to attack.
+        # if target found, return attack_phase({ str(attacker's position) : [list of its targets] }, True)
+        # if no target was found, end attack_phase()
+        more_targets = self.find_targets(str(movePos))
+        if more_targets:
+            GUI.draw_pieces()
+            sleep(0.5)
+            return self.attack_phase({str(movePos): more_targets}, GUI, True)
+        else:
+            return
+            
+    #%% attack() method.
+    # Move attacker and delete target.
+    # Parameter: str(attacker's pos), str(target's position)
+    def attack(self, atkPos, targetPos):
         # Move attacker's position
         for possible_move in self.checks_list[atkPos].moves:
             if str([self.checks_list[atkPos].pos[i] + possible_move[i] for i in range(2)]) == targetPos:
@@ -186,34 +214,18 @@ class Game:
                 break
 
         self.checks_list[str(movePos)] = self.checks_list.pop(atkPos)
-        self.checks_list[str(movePos)].pos = movePos
-        print(f"Attacker has moved into {str(movePos)}.")
+        self.checks_list[str(movePos)].move_phase(movePos)
         sleep(0.5)
-        # Call captured() method of target and delete it
+
+        # Call target.captured() method of target to print in console, and delete target
         self.checks_list.pop(targetPos).captured()
         sleep(0.5)
 
-        # print board so that user can notice how that moved
-        self.print_board()
-        sleep(0.5)
+        # Return movePos (position of attacker after attack)
+        return movePos
 
-        # check if the attacker has to be promoted
-        # if promoted, end attack()
-        if self.check_promotion(str(movePos)):
-            return
-
-        # call find_targets(position of attacker) to find if there is more target be able to attack.
-        # if target found, return attack({ str(attacker's position) : [list of its targets] }, True)
-        # if no target was found, end attack()
-        more_targets = self.find_targets(str(movePos))
-        if more_targets:
-            GUI.draw_pieces()
-            sleep(0.5)
-            return self.attack({str(movePos): more_targets}, GUI, True)
-        else:
-            return
-            
-    #%% find_moves() method.
+    #%% get_move_dict() method.
+    # Find if there is any movable space.
     def get_move_dict(self):
         # Find movable checks
         # dictionary as following:
@@ -236,15 +248,16 @@ class Game:
                     except:
                         pass
         
+        # Return dictionary of movable places' position
         if mover_check_dict:
             return mover_check_dict
         else:
             return None
 
-    #%% move() method.
-    # Find a movable place for a check.
+    #%% move_phase() method.
+    # Proceed move phase and control it.
     # Parameter: return of get_move_dict()
-    def move(self, movable_dict):
+    def move_phase(self, movable_dict):
         #if there is no move possible, end the game
         if not(movable_dict):
             self.game_over()
@@ -268,7 +281,7 @@ class Game:
 
         # If mover has one and only possible move, choose it automatically
         if len(movable_dict[moverPos]) == 1:
-            movingPos = movable_dict[moverPos][0]
+            destinedPos = movable_dict[moverPos][0]
         #If mover has multiple moves, choose which one to go
         else:
             print("This mover has following possible moves: ")
@@ -276,18 +289,29 @@ class Game:
                 print(f"{i}: {movable_dict[moverPos][i]}")
             print("Choose the target(Input nth): ", end = "")
 
-            movingPosNum = int(input())
-            movingPos = movable_dict[moverPos][movingPosNum]
+            destinedPosNum = int(input())
+            destinedPos = movable_dict[moverPos][destinedPosNum]
         
-        # move the check
-        self.checks_list[moverPos].move(movingPos)
-        self.checks_list[str(movingPos)] = self.checks_list.pop(moverPos)
+        # # move the check
+        # self.checks_list[moverPos].move(destinedPos)
+        # self.checks_list[str(destinedPos)] = self.checks_list.pop(moverPos)
+
+        # Call move() method
+        self.move(startPos=moverPos, destinedPos=destinedPos)
 
         # check if the mover has to be promoted
-        self.check_promotion(str(movingPos))
+        self.check_promotion(str(destinedPos))
 
         return
     
+    #%% move() method.
+    # Move check from start position to destined position.
+    # Parameter: str(start position), destined position
+    def move(self, startPos, destinedPos):
+        self.checks_list[startPos].move(destinedPos)
+        self.checks_list[str(destinedPos)] = self.checks_list.pop(startPos)
+
+        return
     
     #%% check_promotion() method.
     # Find whether the check has to promote.
