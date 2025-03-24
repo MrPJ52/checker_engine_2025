@@ -291,10 +291,6 @@ class Game:
 
             destinedPosNum = int(input())
             destinedPos = movable_dict[moverPos][destinedPosNum]
-        
-        # # move the check
-        # self.checks_list[moverPos].move(destinedPos)
-        # self.checks_list[str(destinedPos)] = self.checks_list.pop(moverPos)
 
         # Call move() method
         self.move(startPos=moverPos, destinedPos=destinedPos)
