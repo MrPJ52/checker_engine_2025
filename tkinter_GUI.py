@@ -93,6 +93,7 @@ class CheckersGUI:
             if (self.aiPlayer.side == self.game.turn_player):
                 self.aiPlayer.playTurn(self.game)
                 return self.root.after(500, self.game_loop)
+            # AttributeError will occur if there is no aiPlayer
         except:
             pass
 
