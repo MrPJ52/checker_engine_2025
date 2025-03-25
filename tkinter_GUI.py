@@ -23,10 +23,12 @@ class CheckersGUI:
         self.draw_board()
         self.draw_pieces()
         
+        # Input whether the bot is playing or not
         print("If bot is playing, input 'B' or 'W, if not 0: ", end="")
-        self.aiPlayer = str(input().strip())
-        if self.aiPlayer != '0':
-            self.aiPlayer = PlayerAI(self.aiPlayer)
+        inputSide = str(input().strip())
+        # If there is, Create member variable and reset it with PlayerAI instance
+        if input != '0':
+            self.aiPlayer = PlayerAI(inputSide)
         
         # 1000ms after CheckersGUI instance is created,
         # start game_loop() method to run self.game
@@ -87,9 +89,12 @@ class CheckersGUI:
         self.draw_pieces()
         
         # If there is AI, call methods from PlayerAI instance.
-        if (self.aiPlayer) and (self.aiPlayer.side == self.game.turn_player):
-            self.aiPlayer.playTurn(self.game)
-            return self.root.after(500, self.game_loop)
+        try:
+            if (self.aiPlayer.side == self.game.turn_player):
+                self.aiPlayer.playTurn(self.game)
+                return self.root.after(500, self.game_loop)
+        except:
+            pass
 
         # Find if there is any attacking checks
         # If there is, attack
