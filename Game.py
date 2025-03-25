@@ -100,7 +100,7 @@ class Game:
     #%% find_targets() method.
     # Find if a check has attacking target.
     # Parameter: str(Position of attacker)
-    def find_targets(self, checkPos):
+    def find_targets(self, checkPos:str):
         check = self.checks_list[checkPos]
         target_list = list()
         for posible_move in check.moves:
@@ -143,7 +143,7 @@ class Game:
     # Proceed attack phase and control it.
     # Parameter: Dictionary that is result of get_atk_dict, CheckersGUI object(In tkinter_GUI.py),
     # and boolean to check player has already attacked
-    def attack_phase(self, atk_dict, GUI, alreadyAtked=False):
+    def attack_phase(self, atk_dict:dict, GUI, alreadyAtked=False):
         # get attackers list from atk_dict
         atking_list = list(atk_dict.keys())
         # if it is first attack, choose which one to attack
@@ -208,7 +208,7 @@ class Game:
     #%% attack() method.
     # Move attacker and delete target.
     # Parameter: str(attacker's pos), str(target's position)
-    def attack(self, atkPos, targetPos):
+    def attack(self, atkPos:str, targetPos:str):
         # Move attacker's position
         for possible_move in self.checks_list[atkPos].moves:
             if str([self.checks_list[atkPos].pos[i] + possible_move[i] for i in range(2)]) == targetPos:
@@ -305,7 +305,7 @@ class Game:
     #%% move() method.
     # Move check from start position to destined position.
     # Parameter: str(start position), destined position
-    def move(self, startPos, destinedPos):
+    def move(self, startPos:str, destinedPos:list):
         self.checks_list[startPos].move(destinedPos)
         self.checks_list[str(destinedPos)] = self.checks_list.pop(startPos)
 
@@ -314,7 +314,7 @@ class Game:
     #%% check_promotion() method.
     # Find whether the check has to promote.
     # Parameter: str(position of check)
-    def check_promotion(self, checkPos):
+    def check_promotion(self, checkPos:str):
         if (self.checks_list[checkPos].side == "B" and self.checks_list[checkPos].pos[1] == 7) \
             or (self.checks_list[checkPos].side == "W" and self.checks_list[checkPos].pos[1] == 0):
             # Promotion : Create a King in the same position and delete original Check
