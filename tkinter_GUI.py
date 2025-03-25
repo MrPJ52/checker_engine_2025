@@ -1,9 +1,11 @@
 import tkinter as tk
 import Game
+from PlayerAI import PlayerAI
 
-#%% CheckersGUI class: Overall system including game system and GUI control.
+#%% CheckersGUI class: Overall system including game system
+# and GUI control.
 class CheckersGUI:
-    def __init__(self, root):
+    def __init__(self, root:tk.Tk):
         # Create tkinter instance to open a window, initial setting
         # Argument "root" is tkinter window that this class will send and control.
         self.root = root
@@ -20,6 +22,11 @@ class CheckersGUI:
         # methods to draw board and pieces
         self.draw_board()
         self.draw_pieces()
+        
+        print("If bot is playing, input 'B' or 'W, if not 0: ", end="")
+        self.aiPlayer = str(input().strip())
+        if self.aiPlayer != '0':
+            self.aiPlayer = PlayerAI(self.aiPlayer)
         
         # 1000ms after CheckersGUI instance is created,
         # start game_loop() method to run self.game
@@ -79,6 +86,11 @@ class CheckersGUI:
         self.game.print_board()
         self.draw_pieces()
         
+        # If there is AI, call methods from PlayerAI instance.
+        if (self.aiPlayer) and (self.aiPlayer.side == self.game.turn_player):
+            self.aiPlayer.playTurn(self.game)
+            return self.root.after(500, self.game_loop)
+
         # Find if there is any attacking checks
         # If there is, attack
         attackable_dict = self.game.get_atk_dict()

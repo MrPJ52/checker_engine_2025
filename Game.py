@@ -44,6 +44,8 @@ class Game:
         # self.checks_list[str([2, 7])] = Check([2, 7], "W")
         # self.checks_list[str([6, 7])] = Check([6, 7], "W")
 
+        #Create Checks for debugging game_over()
+        # self.checks_list[str([1, 0])] = Check([1, 0], "B")
     
     #%% print_board() method.
     # Print board through console.
