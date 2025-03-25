@@ -28,7 +28,7 @@ class PlayerAI:
                 print("\nShut down Checker Engine.\n")
                 return
             # If there is movable checks, move
-            # TODO: Need to be changed into makeAttack()
+            # TODO: Need to be changed into makeMove()
             game.move_phase(movable_dict)
         
         # Change turn player
