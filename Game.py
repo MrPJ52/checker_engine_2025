@@ -80,7 +80,7 @@ class Game:
 
         # Find check in start position
         if pos_start in self.checks_list.keys():
-            self.checks_list[pos_start].move_phase(pos_target)
+            self.checks_list[pos_start].move(pos_target)
             
             sleep(0.5)
 
@@ -216,7 +216,7 @@ class Game:
                 break
 
         self.checks_list[str(movePos)] = self.checks_list.pop(atkPos)
-        self.checks_list[str(movePos)].move_phase(movePos)
+        self.checks_list[str(movePos)].move(movePos)
         sleep(0.5)
 
         # Call target.captured() method of target to print in console, and delete target
