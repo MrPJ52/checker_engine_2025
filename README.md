@@ -8,7 +8,7 @@ TODO:
 
 2. Create get_board() method in Game class that returns the checks' positions into algebraic notation.
 
-3. Implement PlayerAI class. For now the internal methods are the same with Game member method. Replace it into PlayerAI member method.
+3. Create Learning AI algorthm.
 
 4. (Optimization) Optimize print_board() method in Game class.
 5. (Potential bug fix)Fix error within move_debug() and attack_phase() method in Game class. It is not sure which part is broken(move_debug, attack_phase, find_targets, get_atk_dict), so it would be preceeded with debug play.
