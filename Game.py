@@ -21,7 +21,6 @@ y
 class Game:
     # initial setting
     def __init__(self):
-        # self.board = [[0 for _ in range(8)] for _ in range(8)]
         self.board = [ 0,0,0,0,
                       0,0,0,0,
                       0,0,0,0,
@@ -38,13 +37,13 @@ class Game:
         self.checks_list = dict()
 
         # Create Checks for normal games
-        for x in range(0, 8, 2):
-            for y in range(3):
-                self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
+        # for x in range(0, 8, 2):
+        #     for y in range(3):
+        #         self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
         
-        for x in range(0, 8, 2):
-            for y in range(3):
-                self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
+        # for x in range(0, 8, 2):
+        #     for y in range(3):
+        #         self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
         
         # Create Checks for debugging
         # self.checks_list[str([1, 0])] = Check([1, 0], "B")
@@ -53,11 +52,22 @@ class Game:
         # self.checks_list[str([6, 7])] = Check([6, 7], "W")
 
         #Create Checks for debugging game_over()
-        # self.checks_list[str([1, 0])] = Check([1, 0], "B")
+        self.checks_list[str([1, 0])] = Check([1, 0], "B")
+
+        # Initially set board by set_board()
+        self.set_board()
     
     #%% set_board() method.
     # Set the board situation as 1D list.
     def set_board(self):
+        self.board = [ 0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0]
         for check in self.checks_list.values():
             # Set notation
             # + for White, - for Black
@@ -359,10 +369,39 @@ class Game:
         print(f"\n{winner} winned!\n")
 
         return
-    
 
+    #%% play_game() method.
+    # Returns self.board.
+    def play_game(self):
+        while (not self.game_is_over):
+            self.print_board()
 
-# For debug.
+            # Find if there is any attacking checks
+            # If there is, attack
+            attackable_dict = self.get_atk_dict()
+            if attackable_dict:
+                self.attack_phase(attackable_dict, self, False)
+            # If there is not,
+            # Find if there is any movable checks
+            else:
+                movable_dict = self.get_move_dict()
+                # If there is no movable checks,
+                # Turn player is defeated, end game
+                # TODO: Update game over condition.
+                if not movable_dict:
+                    self.game_over()
+                    print("\nShut down Checker Engine.\n")
+                    return self.board
+                # If there is movable checks, move
+                self.move_phase(movable_dict)
+            
+            # Change turn player
+            self.turn_player = 'W' if self.turn_player == 'B' else 'B'
+        
+        return
+
+# For debugging this file.
 if __name__ == "__main__":
     myGame = Game()
-    myGame.print_board()
+    board = myGame.play_game()
+    print(board)
