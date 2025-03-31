@@ -60,14 +60,15 @@ class Game:
     def set_board(self):
         for check in self.checks_list.values():
             # Set notation
+            # + for White, - for Black
             numNotation = 1 if (check.side == "W") else -1
+            # 1 for normal check, 2 for King
             numNotation *= (2 if ("K" in check.notation) else 1)
 
             x = check.pos[0]
             y = check.pos[1]
-            idx = (int(x/2) + 1) + y*4 - 1
-
             # position as [x, y] --> [(int(x/2) + 1) + y*4 - 1] in 1D array
+            idx = (int(x/2) + 1) + y*4 - 1
             self.board[idx] = numNotation
         
         return
@@ -81,6 +82,7 @@ class Game:
         for y in range(8):
             print(f"{y} ", end="")
             for x in range(8):
+                # Pass the white square
                 if ((x+y) % 2 == 0):
                     print("|__|", end="")
                     continue
