@@ -21,7 +21,15 @@ y
 class Game:
     # initial setting
     def __init__(self):
-        self.board = [[0 for _ in range(8)] for _ in range(8)]
+        # self.board = [[0 for _ in range(8)] for _ in range(8)]
+        self.board = [ 0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0,
+                      0,0,0,0]
         self.game_is_over = False
         self.turn_player = 'B'
         # checks_list = { str([x, y]) : Check instance }
@@ -47,22 +55,40 @@ class Game:
         #Create Checks for debugging game_over()
         # self.checks_list[str([1, 0])] = Check([1, 0], "B")
     
+    #%% set_board() method.
+    # Set the board situation as 1D list.
+    def set_board(self):
+        for check in self.checks_list.values():
+            # Set notation
+            numNotation = 1 if (check.side == "W") else -1
+            numNotation *= (2 if ("K" in check.notation) else 1)
+
+            x = check.pos[0]
+            y = check.pos[1]
+            idx = (int(x/2) + 1) + y*4 - 1
+
+            # position as [x, y] --> [(int(x/2) + 1) + y*4 - 1] in 1D array
+            self.board[idx] = numNotation
+        
+        return
+
     #%% print_board() method.
     # Print board through console.
     def print_board(self):
-        self.board = [[0 for _ in range(8)] for _ in range(8)]
-        for piece in self.checks_list.values():
-            self.board[piece.pos[1]][piece.pos[0]] = piece.notation
+        self.set_board()
         
-        # TODO: May need Optimazation
         print("    0   1   2   3   4   5   6   7")
         for y in range(8):
-            print(f"{y}  ", end="")
+            print(f"{y} ", end="")
             for x in range(8):
-                if self.board[y][x] == 0:
+                if ((x+y) % 2 == 0):
                     print("|__|", end="")
+                    continue
+
+                if self.board[(int(x/2) + 1) + y*4 - 1] != 0:
+                    print("|{0:>2}|".format(self.board[(int(x/2) + 1) + y*4 - 1]), end="")
                 else:
-                    print("|" + self.board[y][x] + "|", end="")
+                    print("|__|", end="")
             print()
         
         print(f"It is {self.turn_player}'s turn.\n")
@@ -332,3 +358,9 @@ class Game:
 
         return
     
+
+
+# For debug.
+if __name__ == "__main__":
+    myGame = Game()
+    myGame.print_board()
