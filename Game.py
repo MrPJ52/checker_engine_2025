@@ -109,7 +109,7 @@ class Game:
                 # Check if there is an enemy check in pos_atked
                 # and the position across the enemy is empty or out of bound
                 if (self.checks_list[pos_atked].side != check.side) \
-                and (self.board[check.pos[1] + 2*posible_move[1]][check.pos[0] + 2*posible_move[0]] == 0) \
+                and (str([check.pos[1] + 2*posible_move[1], check.pos[0] + 2*posible_move[0]]) in self.checks_list.keys()) \
                 and (0 <= check.pos[0] + 2*posible_move[0] <= 7) and (0 <= check.pos[1] + 2*posible_move[1] <= 7):
                     target_list.append(pos_atked)
             except:
