@@ -11,7 +11,10 @@ class PlayerAI:
     # Make AI actually play a turn, including attacking and moving.
     # Parameter: Game() instance
     def playTurn(self, game:Game):
-        print("AI player is playing...")
+        # Re-set board
+        game.set_board()
+
+        print(f"AI {self.side} player is playing...")
         # Find if there is any attacking checks
         # If there is, attack
         attackable_dict = game.get_atk_dict()
