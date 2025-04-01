@@ -21,6 +21,8 @@ y
 class Game:
     # initial setting
     def __init__(self):
+        # WTFWTFWTFWTFWTF
+        # 아래 이거 고쳐 시발
         self.board = [[0 for _ in range(8)] for _ in range(8)]
         self.game_is_over = False
         self.turn_player = 'B'
