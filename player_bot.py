@@ -1,8 +1,8 @@
 from random import choice
-from Game import Game
+from game import Game
 
-#%% PlayerAI
-class PlayerAI:
+#%% PlayerBot
+class PlayerBot:
     # constructor
     def __init__(self, Side):
         self.side = Side

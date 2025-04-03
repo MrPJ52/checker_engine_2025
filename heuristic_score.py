@@ -1,5 +1,5 @@
-from Game import Game
-from PlayerAI import PlayerAI
+from game import Game
+from player_bot import PlayerBot
 
 class ScoreFunction:
     def __init__(self):
@@ -9,8 +9,8 @@ class ScoreFunction:
     def run_game(self):
         newGame = Game()
         newGame.sleep_time = 0.1
-        P1 = PlayerAI('B')
-        P2 = PlayerAI('W')
+        P1 = PlayerBot('B')
+        P2 = PlayerBot('W')
 
         while (not newGame.game_is_over):
             P1.playTurn(game=newGame)

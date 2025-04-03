@@ -1,6 +1,6 @@
 import tkinter as tk
-import Game
-from PlayerAI import PlayerAI
+import game
+from player_bot import PlayerBot
 
 #%% CheckersGUI class: Overall system including game system
 # and GUI control.
@@ -17,7 +17,7 @@ class CheckersGUI:
         self.canvas.pack()
         
         # in CheckersGUI, it has a Game field to run checker game
-        self.game = Game.Game()
+        self.game = game.Game()
 
         # methods to draw board and pieces
         self.draw_board()
@@ -28,7 +28,7 @@ class CheckersGUI:
         inputSide = str(input().strip())
         # If there is, Create member variable and reset it with PlayerAI instance
         if input != '0':
-            self.aiPlayer = PlayerAI(inputSide)
+            self.aiPlayer = PlayerBot(inputSide)
         
         # 1000ms after CheckersGUI instance is created,
         # start game_loop() method to run self.game
