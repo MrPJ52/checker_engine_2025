@@ -139,23 +139,23 @@ class Game:
     # Couldn't find the reason, but might be fixed later.
     #%% find_targets() method.
     # Find if a check has attacking target.
-    # Parameter: str(Position of attacker)
+    # Parameter: [Position of attacker]
     def find_targets(self, checkPos:str):
         check = self.checks_list[checkPos]
         target_list = list()
         for posible_move in check.moves:
-            pos_atked = str([check.pos[i] + posible_move[i] for i in range(2)])
+            pos_atked = [check.pos[i] + posible_move[i] for i in range(2)]
             try:
                 # Check if there is an enemy check in pos_atked
                 # and the position across the enemy is empty or out of bound
-                if (self.checks_list[pos_atked].side != check.side) \
+                if (self.checks_list[str(pos_atked)].side != check.side) \
                 and (str([check.pos[0] + 2*posible_move[0], check.pos[1] + 2*posible_move[1]]) not in self.checks_list.keys()) \
                 and (0 <= check.pos[0] + 2*posible_move[0] <= 7) and (0 <= check.pos[1] + 2*posible_move[1] <= 7):
                     target_list.append(pos_atked)
             except:
                 pass
 
-        # Return [list of str(position of target)]
+        # Return [list of [position of target]]
         if target_list:
             return target_list
         else:
@@ -223,7 +223,7 @@ class Game:
         sleep(self.sleep_time)
 
         # Call attack() method and get return value
-        movePos = self.attack(atkPos=atkPos, targetPos=targetPos)
+        movePos = self.attack(atkPos=atkPos, targetPos=str(targetPos))
 
         # print board so that user can notice how that moved
         self.print_board()
