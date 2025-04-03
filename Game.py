@@ -146,6 +146,7 @@ class Game:
             try:
                 # Check if there is an enemy check in pos_atked
                 # and the position across the enemy is empty or out of bound
+                # TODO: Need to fix condition below - it is running wrong
                 if (self.checks_list[pos_atked].side != check.side) \
                 and (str([check.pos[1] + 2*posible_move[1], check.pos[0] + 2*posible_move[0]]) in self.checks_list.keys()) \
                 and (0 <= check.pos[0] + 2*posible_move[0] <= 7) and (0 <= check.pos[1] + 2*posible_move[1] <= 7):
