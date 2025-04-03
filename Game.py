@@ -175,8 +175,6 @@ class Game:
                     except:
                         atk_check_dict[(str(check.pos))] = targets
         
-        ######## DEBUGING #######
-        print(atk_check_dict)
         return atk_check_dict
     
     #%% attack_phase() method.
@@ -231,8 +229,8 @@ class Game:
 
         # check if the attacker has to be promoted
         # if promoted, end attack_phase()
-        if self.check_promotion(str(movePos)):
-            return
+        # if self.check_promotion(str(movePos)):
+        #     return
 
         # call find_targets(position of attacker) to find if there is more target be able to attack.
         # if target found, return attack_phase({ str(attacker's position) : [list of its targets] }, True)
@@ -262,6 +260,14 @@ class Game:
         # Call target.captured() method of target to print in console, and delete target
         self.checks_list.pop(targetPos).captured()
         sleep(0.5)
+
+        ###### TODO: For now PlayerBot is using only attack() method, not attack_phase() method.
+        # BUT Promotion while attack and chain attack is only implemented in attack_phase().
+        # They needed to be moved in attack() method, so that Bots can do the same.
+        # check if the attacker has to be promoted
+        # if promoted, end attack_phase()
+        if self.check_promotion(str(movePos)):
+            return movePos
 
         # Return movePos (position of attacker after attack)
         return movePos
@@ -338,7 +344,7 @@ class Game:
         self.move(startPos=moverPos, destinedPos=destinedPos)
 
         # check if the mover has to be promoted
-        self.check_promotion(str(destinedPos))
+        # self.check_promotion(str(destinedPos))
 
         return
     
@@ -348,6 +354,9 @@ class Game:
     def move(self, startPos:str, destinedPos:list):
         self.checks_list[startPos].move(destinedPos)
         self.checks_list[str(destinedPos)] = self.checks_list.pop(startPos)
+
+        # check if the mover has to be promoted
+        self.check_promotion(str(destinedPos))
 
         return
     
@@ -361,8 +370,11 @@ class Game:
             self.checks_list[checkPos] = King(self.checks_list[checkPos].pos, self.checks_list[checkPos].side)
             # if promoted, return True so that other method can notice
             return True
+        else:
+            return False
 
     #%% game_over() method.
+    # TODO: Condition to judge game over should be updated.
     def game_over(self):
         self.game_is_over = True
         print(f"There is no check left or possible moves for {self.turn_player}.\n")
@@ -373,7 +385,7 @@ class Game:
         return
 
     #%% play_game() method.
-    # Returns self.board.
+    # Run a whole game and Returns self.board.
     def play_game(self):
         while (not self.game_is_over):
             self.print_board()

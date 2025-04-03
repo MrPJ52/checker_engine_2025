@@ -15,9 +15,12 @@ class ScoreFunction:
             P1.playTurn(game=newGame)
             if newGame.game_is_over:
                 return newGame.board
+            newGame.print_board()
+
             P2.playTurn(game=newGame)
             if newGame.game_is_over:
                 return newGame.board
+            newGame.print_board()
         
         return
 
@@ -45,6 +48,7 @@ class ScoreFunction:
             # Judge left moves
             # TODO: Connect with Game.find_moves() to get weight of left moves.
             
+
             score_sum += tile
         
         return score_sum
