@@ -8,21 +8,24 @@ class ScoreFunction:
     
     def run_game(self):
         newGame = Game()
+        newGame.sleep_time = 0.1
         P1 = PlayerAI('B')
         P2 = PlayerAI('W')
 
         while (not newGame.game_is_over):
             P1.playTurn(game=newGame)
             if newGame.game_is_over:
-                return newGame.board
+                break
             newGame.print_board()
 
             P2.playTurn(game=newGame)
             if newGame.game_is_over:
-                return newGame.board
+                break
             newGame.print_board()
         
-        return
+        self.game_cnt += 1
+
+        return newGame.board
 
     def score_board(self, stdSide, target_board:list):
         w_center = 1.3
@@ -55,5 +58,6 @@ class ScoreFunction:
 
 # Debugging.
 testInst = ScoreFunction()
-board = testInst.run_game()
-print(board)
+while(testInst.game_cnt < 2):
+    board = testInst.run_game()
+    print(board)

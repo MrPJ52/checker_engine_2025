@@ -30,6 +30,8 @@ class Game:
                       0,0,0,0,
                       0,0,0,0]
         self.game_is_over = False
+        # To change sleep time
+        self.sleep_time = 0.5
         self.turn_player = 'B'
         # checks_list = { str([x, y]) : Check instance }
         # Can act as following:
@@ -120,7 +122,7 @@ class Game:
         if pos_start in self.checks_list.keys():
             self.checks_list[pos_start].move(pos_target)
             
-            sleep(0.5)
+            sleep(self.sleep_time)
 
             # Delete original_position:check and add new_position:check
             self.checks_list[str(pos_target)] = self.checks_list.pop(pos_start)
@@ -201,7 +203,7 @@ class Game:
         else:
             atkPos = list(atk_dict.keys())[0]
         
-        sleep(0.5)
+        sleep(self.sleep_time)
 
         # If attacker has one and only target, choose it automatically
         if len(atk_dict[atkPos]) == 1:
@@ -218,14 +220,14 @@ class Game:
         
 
         print(f"Check in position {atkPos} attacks {targetPos}.")
-        sleep(0.5)
+        sleep(self.sleep_time)
 
         # Call attack() method and get return value
         movePos = self.attack(atkPos=atkPos, targetPos=targetPos)
 
         # print board so that user can notice how that moved
         self.print_board()
-        sleep(0.5)
+        sleep(self.sleep_time)
 
         # check if the attacker has to be promoted
         # if promoted, end attack_phase()
@@ -238,7 +240,7 @@ class Game:
         more_targets = self.find_targets(str(movePos))
         if more_targets:
             GUI.draw_pieces()
-            sleep(0.5)
+            sleep(self.sleep_time)
             return self.attack_phase({str(movePos): more_targets}, GUI, True)
         else:
             return
@@ -255,11 +257,11 @@ class Game:
 
         self.checks_list[str(movePos)] = self.checks_list.pop(atkPos)
         self.checks_list[str(movePos)].move(movePos)
-        sleep(0.5)
+        sleep(self.sleep_time)
 
         # Call target.captured() method of target to print in console, and delete target
         self.checks_list.pop(targetPos).captured()
-        sleep(0.5)
+        sleep(self.sleep_time)
 
         ###### TODO: For now PlayerBot is using only attack() method, not attack_phase() method.
         # BUT Promotion while attack and chain attack is only implemented in attack_phase().
@@ -381,6 +383,10 @@ class Game:
         winner = "B" if (self.turn_player == "W") else "W"
 
         print(f"\n{winner} winned!\n")
+
+        ########## may be deleted after debug ##########
+        sleep(3)
+        ########## may be deleted after debug ##########
 
         return
 
