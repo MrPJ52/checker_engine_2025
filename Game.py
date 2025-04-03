@@ -37,13 +37,13 @@ class Game:
         self.checks_list = dict()
 
         # Create Checks for normal games
-        # for x in range(0, 8, 2):
-        #     for y in range(3):
-        #         self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
+        for x in range(0, 8, 2):
+            for y in range(3):
+                self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
         
-        # for x in range(0, 8, 2):
-        #     for y in range(3):
-        #         self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
+        for x in range(0, 8, 2):
+            for y in range(3):
+                self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
         
         # Create Checks for debugging
         # self.checks_list[str([1, 0])] = Check([1, 0], "B")
@@ -52,7 +52,7 @@ class Game:
         # self.checks_list[str([6, 7])] = Check([6, 7], "W")
 
         #Create Checks for debugging game_over()
-        self.checks_list[str([1, 0])] = Check([1, 0], "B")
+        # self.checks_list[str([1, 0])] = Check([1, 0], "B")
 
         # Initially set board by set_board()
         self.set_board()
@@ -146,9 +146,8 @@ class Game:
             try:
                 # Check if there is an enemy check in pos_atked
                 # and the position across the enemy is empty or out of bound
-                # TODO: Need to fix condition below - it is running wrong
                 if (self.checks_list[pos_atked].side != check.side) \
-                and (str([check.pos[1] + 2*posible_move[1], check.pos[0] + 2*posible_move[0]]) in self.checks_list.keys()) \
+                and (str([check.pos[0] + 2*posible_move[0], check.pos[1] + 2*posible_move[1]]) not in self.checks_list.keys()) \
                 and (0 <= check.pos[0] + 2*posible_move[0] <= 7) and (0 <= check.pos[1] + 2*posible_move[1] <= 7):
                     target_list.append(pos_atked)
             except:
@@ -176,6 +175,8 @@ class Game:
                     except:
                         atk_check_dict[(str(check.pos))] = targets
         
+        ######## DEBUGING #######
+        print(atk_check_dict)
         return atk_check_dict
     
     #%% attack_phase() method.
