@@ -1,5 +1,6 @@
 from game import Game
 from player_bot import PlayerBot
+from time import sleep
 
 class ScoreFunction:
     def __init__(self):
@@ -8,22 +9,32 @@ class ScoreFunction:
     
     def run_game(self):
         newGame = Game()
-        newGame.sleep_time = 0.1
+        newGame.sleep_time = 0.05
         P1 = PlayerBot('B')
         P2 = PlayerBot('W')
+
+        turn_cnt = 0
 
         while (not newGame.game_is_over):
             P1.playTurn(game=newGame)
             if newGame.game_is_over:
+                winner = 'W'
                 break
             newGame.print_board()
+            turn_cnt += 1
 
             P2.playTurn(game=newGame)
             if newGame.game_is_over:
+                winner = 'B'
                 break
             newGame.print_board()
+
+            turn_cnt += 1
         
+        print(f"Took {turn_cnt} turns, and winner is {winner}.")
         self.game_cnt += 1
+
+        sleep(3)
 
         return newGame.board
 
@@ -58,6 +69,6 @@ class ScoreFunction:
 
 # Debugging.
 testInst = ScoreFunction()
-while(testInst.game_cnt < 2):
+while(testInst.game_cnt < 5):
     board = testInst.run_game()
     print(board)

@@ -104,8 +104,6 @@ class Game:
                 else:
                     print("|__|", end="")
             print()
-        
-        print(f"It is {self.turn_player}'s turn.\n")
     
     #%% move_debug method.
     # Method to move check in any location.
@@ -266,6 +264,7 @@ class Game:
         ###### TODO: For now PlayerBot is using only attack() method, not attack_phase() method.
         # BUT Promotion while attack and chain attack is only implemented in attack_phase().
         # They needed to be moved in attack() method, so that Bots can do the same.
+
         # check if the attacker has to be promoted
         # if promoted, end attack_phase()
         if self.check_promotion(str(movePos)):
@@ -344,6 +343,7 @@ class Game:
 
         # Call move() method
         self.move(startPos=moverPos, destinedPos=destinedPos)
+        
 
         # check if the mover has to be promoted
         # self.check_promotion(str(destinedPos))
@@ -356,6 +356,8 @@ class Game:
     def move(self, startPos:str, destinedPos:list):
         self.checks_list[startPos].move(destinedPos)
         self.checks_list[str(destinedPos)] = self.checks_list.pop(startPos)
+
+        sleep(self.sleep_time)
 
         # check if the mover has to be promoted
         self.check_promotion(str(destinedPos))
@@ -384,10 +386,6 @@ class Game:
 
         print(f"\n{winner} winned!\n")
 
-        ########## may be deleted after debug ##########
-        sleep(3)
-        ########## may be deleted after debug ##########
-
         return
 
     #%% play_game() method.
@@ -396,6 +394,7 @@ class Game:
         while (not self.game_is_over):
             self.print_board()
 
+            print(f"\nIt is {self.turn_player}'s turn.\n")
             # Find if there is any attacking checks
             # If there is, attack
             attackable_dict = self.get_atk_dict()
@@ -418,6 +417,10 @@ class Game:
             # Change turn player
             self.turn_player = 'W' if self.turn_player == 'B' else 'B'
         
+        return
+    
+    # Only for dealing with error about GUI when running this file.
+    def draw_pieces(self):
         return
 
 # For debugging this file.

@@ -1,6 +1,7 @@
 import tkinter as tk
 import game
 from player_bot import PlayerBot
+from time import sleep
 
 #%% CheckersGUI class: Overall system including game system
 # and GUI control.
@@ -12,6 +13,7 @@ class CheckersGUI:
         self.root.title("Checker Engine")
         self.root.geometry("600x600")
         self.root.resizable(False, False)
+        self.gui_sleep_time = 500
         
         self.canvas = tk.Canvas(self.root, width=500, height=500)
         self.canvas.pack()
@@ -24,15 +26,17 @@ class CheckersGUI:
         self.draw_pieces()
         
         # Input whether the bot is playing or not
-        print("If bot is playing, input 'B' or 'W, if not 0: ", end="")
+        print("If bot is playing, input 'B' or 'W, if both 2, if none 0: ", end="")
         inputSide = str(input().strip())
         # If there is, Create member variable and reset it with PlayerAI instance
-        if input != '0':
+        if (inputSide == '2'):
+            self.aiPlayer = list((PlayerBot('B'), PlayerBot('W')))
+        elif (inputSide != '0'):
             self.aiPlayer = PlayerBot(inputSide)
         
         # 1000ms after CheckersGUI instance is created,
         # start game_loop() method to run self.game
-        self.root.after(1000, self.game_loop)
+        self.root.after(self.gui_sleep_time, self.game_loop)
     
     #%% draw_board() and draw_pieces() methods.
     def draw_board(self):
@@ -80,6 +84,14 @@ class CheckersGUI:
     #%% game_loop() method.
     # Implemented as recursive method to repeat the turn.
     def game_loop(self):
+        # if there are two bots, call aiPlay()
+        try:
+            if (len(self.aiPlayer) == 2):
+                self.aiPlay()
+                return
+        except:
+            pass
+        
         if self.game.game_is_over:
             print("\nShut down Checker Engine.\n")
             return
@@ -88,11 +100,12 @@ class CheckersGUI:
         self.game.print_board()
         self.draw_pieces()
         
+        print(f"\nIt is {self.game.turn_player}'s turn.\n")
         # If there is AI, call methods from PlayerAI instance.
         try:
             if (self.aiPlayer.side == self.game.turn_player):
                 self.aiPlayer.playTurn(self.game)
-                return self.root.after(500, self.game_loop)
+                return self.root.after(self.gui_sleep_time, self.game_loop)
             # AttributeError will occur if there is no aiPlayer
         except:
             pass
@@ -117,7 +130,30 @@ class CheckersGUI:
         
         # Change turn player
         self.game.turn_player = 'W' if self.game.turn_player == 'B' else 'B'
-        self.root.after(500, self.game_loop)
+        self.root.after(self.gui_sleep_time, self.game_loop)
+    
+    #%% aiPlay() method.
+    # Let bots play a whole game and show it.
+    def aiPlay(self):
+        # Set sleep time shorter
+        self.gui_sleep_time = 50
+        self.game.sleep_time = 0.05
+
+        if self.game.game_is_over:
+            self.root.destroy()
+            return
+        
+        print(f"\nIt is {self.game.turn_player}'s turn.\n")
+        # set turn-playing bot
+        current_bot = self.aiPlayer[0] if self.game.turn_player == 'B' else self.aiPlayer[1]
+        current_bot.playTurn(self.game)
+
+        self.game.print_board()
+        self.draw_pieces()
+
+        self.root.after(self.gui_sleep_time, self.aiPlay)
+
+        return
 
 #%% if this file is run directly,
 # Create CheckersGUI instance and run
