@@ -169,6 +169,7 @@ class Game:
     # TODO: there was an error about attack algorithm.
     # After move_debug(), one attackable check ignored it.
     # Couldn't find the reason, but might be fixed later.
+    
     #%% find_targets() method.
     # Find if a check has attacking target.
     # Parameter: [Position of attacker]
