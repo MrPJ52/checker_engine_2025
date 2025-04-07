@@ -1,5 +1,5 @@
 class Check:
-    def __init__(self, Pos, Side): # Parameter: [position as x, y], side
+    def __init__(self, Pos:list, Side:str): # Parameter: [position as x, y], side
         self.pos = Pos #[x, y]
         self.side = Side
         if self.side == "B":
@@ -17,7 +17,7 @@ class Check:
 
 
 class King(Check):
-    def __init__(self, Pos, Side):
+    def __init__(self, Pos:list, Side:str):
         super().__init__(Pos, Side)
         self.moves = [[1, 1], [-1, 1], [-1, -1], [1, -1]]
         self.notation = self.side + "K"

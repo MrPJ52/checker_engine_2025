@@ -6,58 +6,86 @@ class ScoreFunction:
     def __init__(self):
         self.game_cnt = 0
         self.game_score_list = list()
+        self.boards_list = list()
     
     def run_game(self):
         newGame = Game()
-        newGame.sleep_time = 0.05
+        # Set sleep time of Game shorter.
+        newGame.sleep_time = 0
         P1 = PlayerBot('B')
         P2 = PlayerBot('W')
 
         turn_cnt = 0
-
-        while (not newGame.game_is_over):
+        # Set max turn count.
+        turn_cnt_max = 30
+        # Play until one game ends or hit specific turn count.
+        while (not(newGame.game_is_over or turn_cnt >= turn_cnt_max)):
             P1.playTurn(game=newGame)
             if newGame.game_is_over:
-                winner = 'W'
                 break
             newGame.print_board()
             turn_cnt += 1
 
             P2.playTurn(game=newGame)
             if newGame.game_is_over:
-                winner = 'B'
                 break
             newGame.print_board()
-
             turn_cnt += 1
-        
-        print(f"Took {turn_cnt} turns, and winner is {winner}.")
+
         self.game_cnt += 1
+        print(f"Took {turn_cnt} turns.")
+        sleep(1)
 
-        sleep(3)
-
+        self.boards_list.append(newGame.board)
         return newGame.board
 
-    def score_board(self, stdSide, target_board:list):
-        w_center = 1.3
-        w_advanced = 1.5
+    def score_board(self, target_board:list):
+        # Weights
+        w_center = 1.6
+        w_advanced = 1.2
         w_left_moves = 1.2
         # In case of weight of number of check or King,
         # the notation in Game.board(1 or 2) is weight by itself.
 
         score_sum = 0
 
+        # To find if there are only one side pieces,
+        # Check if every pieces are in the same side with very first piece.
+        first_tile = target_board[0]
+        winner = 0
+        for i in range(len(target_board)):
+            # Find first tile that is NOT 0 (which means there is a piece)
+            if first_tile == 0:
+                first_tile = target_board[i]
+                winner = first_tile
+                continue
+            else:
+                pass
+
+            # Check each tile and whether it is empty or there is enemy.
+            # If there is enemy in tile, winner = 0, then break.
+            if target_board[i] == 0:
+                continue
+            elif first_tile*target_board[i] < 0:
+                winner = 0
+                break
+        # If there is winner, return massively big score.
+        if winner:
+            return 10000 if (winner > 0) else -10000
+
+
         for i in range(len(target_board)):
             tile = target_board[i]
-            # Convert index to coordination
-            y = int((i+1)/4)
-            x = (i+1)%4 - (y%2)
+
+            # Convert 1D index to 2D coordination
+            y = i//4
+            x = ((i%4)*2 + 1) - (y%2)
 
             # Judge center
             if (2 <= x) and (x <= 5) and (2 <= y) and (y <= 5):
                 tile *= w_center
-            # Judge advanced
-            if (((y >= 6) and (stdSide == "B")) or ((y <= 1) and (stdSide == "W"))):
+            # Judge advanced: only for men, not for king.
+            if (((y >= 6) and (tile == -1)) or ((y <= 1) and (tile == 1))):
                 tile *= w_advanced
             # Judge left moves
             # TODO: Connect with Game.find_moves() to get weight of left moves.
@@ -69,6 +97,21 @@ class ScoreFunction:
 
 # Debugging.
 testInst = ScoreFunction()
-while(testInst.game_cnt < 5):
+
+while(testInst.game_cnt < 10):
     board = testInst.run_game()
     print(board)
+
+for board in testInst.boards_list:
+    print(board)
+    game_sample = Game()
+    game_sample.import_board(board, 'W')
+    game_sample.print_board()
+    print("Score of this board is " + str(testInst.score_board(board)) + "\n")
+
+
+# Testing board scoring.
+# board = [0 for _ in range(32)]
+# board[3] = 1
+# print(board)
+# print(testInst.score_board(board))

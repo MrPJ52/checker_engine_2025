@@ -60,7 +60,7 @@ class Game:
         self.set_board()
     
     #%% set_board() method.
-    # Set the board situation as 1D list.
+    # Set the board situation as 1D list, according to self.checks_list.
     def set_board(self):
         self.board = [ 0,0,0,0,
                       0,0,0,0,
@@ -79,10 +79,41 @@ class Game:
 
             x = check.pos[0]
             y = check.pos[1]
-            # position as [x, y] --> [(int(x/2) + 1) + y*4 - 1] in 1D array
-            idx = (int(x/2) + 1) + y*4 - 1
+            # position as [x, y] --> [x//2 + y*4] in 1D array
+            idx = x//2 + y*4
             self.board[idx] = numNotation
         
+        return
+    
+    #%% import_board() method.
+    # Import board in form of 1D Array.
+    # Set the Game object including board according to input information.
+    # Basically do the opposite to set_board().
+    def import_board(self, board_in:list, turn_player_in:str):
+        # Reset game infos
+        self.board = board_in
+        self.turn_player = turn_player_in
+        self.checks_list = dict()
+
+        # Create new Check object and fill it into self.checks_list
+        for i in range(len(self.board)):
+            tile = self.board[i]
+            # If tile is empty, continue
+            if (tile == 0):
+                continue
+
+            # Convert 1D index to 2D coordination
+            y = i//4
+            x = ((i%4)*2 + 1) - (y%2)
+
+            # Reset self.checks_list with checks info
+            side = 'B' if tile < 0 else 'W'
+            pos = [x, y]
+            if (tile == 2 or tile == -2):
+                self.checks_list[str(pos)] = King(pos, side)
+            else:
+                self.checks_list[str(pos)] = Check(pos, side)
+
         return
 
     #%% print_board() method.
@@ -99,11 +130,14 @@ class Game:
                     print("|__|", end="")
                     continue
 
-                if self.board[(int(x/2) + 1) + y*4 - 1] != 0:
-                    print("|{0:>2}|".format(self.board[(int(x/2) + 1) + y*4 - 1]), end="")
+                if self.board[x//2 + y*4] != 0:
+                    print("|{0:>2}|".format(self.board[x//2 + y*4]), end="")
                 else:
                     print("|__|", end="")
             print()
+
+        return
+    
     
     #%% move_debug method.
     # Method to move check in any location.
@@ -285,17 +319,14 @@ class Game:
                 # Check all possible moves
                 for posible_move in check.moves:
                     pos_move = [check.pos[i] + posible_move[i] for i in range(2)]
-                    try:
-                        # Check if pos_move is empty and not out of bound
-                        if (not (str(pos_move) in self.checks_list.keys() )) \
-                        and (0 <= check.pos[0] + posible_move[0] <= 7) and (0 <= check.pos[1] + posible_move[1] <= 7):
-                            try:
-                                mover_check_dict[(str(check.pos))].append(pos_move)
-                            except:
-                                mover_check_dict[(str(check.pos))] = [pos_move]
 
-                    except:
-                        pass
+                    # Check if pos_move is empty and not out of bound
+                    if (not (str(pos_move) in self.checks_list.keys() )) \
+                    and (0 <= pos_move[0] <= 7) and (0 <= pos_move[1] <= 7):
+                        try:
+                            mover_check_dict[(str(check.pos))].append(pos_move)
+                        except:
+                            mover_check_dict[(str(check.pos))] = [pos_move]
         
         # Return dictionary of movable places' position
         if mover_check_dict:
@@ -423,8 +454,18 @@ class Game:
     def draw_pieces(self):
         return
 
-# For debugging this file.
+# For debugging playing in this file.
+# if __name__ == "__main__":
+#     myGame = Game()
+#     board = myGame.play_game()
+#     print(board)
+
+#To debug import_board().
 if __name__ == "__main__":
     myGame = Game()
-    board = myGame.play_game()
+    board = [0 for _ in range(32)]
+    board[8] = 1
+    board[23] = -1
     print(board)
+    myGame.import_board(board_in=board, turn_player_in='W')
+    result = myGame.play_game()
