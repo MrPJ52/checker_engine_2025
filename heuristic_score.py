@@ -17,7 +17,7 @@ class ScoreFunction:
 
         turn_cnt = 0
         # Set max turn count.
-        turn_cnt_max = 30
+        turn_cnt_max = 50
         # Play until one game ends or hit specific turn count.
         while (not(newGame.game_is_over or turn_cnt >= turn_cnt_max)):
             P1.playTurn(game=newGame)
@@ -49,6 +49,25 @@ class ScoreFunction:
 
         score_sum = 0
 
+        #TODO: Fix bug. When there's only black pieces,
+        # it sometimes doesn't catch game is over.
+        # Below is example output.
+        '''
+        [-1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, -1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        Check in position[7, 2] has been promoted to King.
+
+            0   1   2   3   4   5   6   7
+        0 |__||-1||__||__||__||__||__||__|
+        1 |-1||__||__||__||__||__||__||__|
+        2 |__||__||__||__||__||__||__||-2|        
+        3 |__||__||__||__||__||__||__||__|        
+        4 |__||__||__||-1||__||__||__||-1|        
+        5 |__||__||__||__||__||__||__||__|        
+        6 |__||__||__||__||__||__||__||__|        
+        7 |__||__||__||__||__||__||__||__|        
+        Score of this board is -6.6.
+        '''
+
         # To find if there are only one side pieces,
         # Check if every pieces are in the same side with very first piece.
         first_tile = target_board[0]
@@ -70,7 +89,7 @@ class ScoreFunction:
                 winner = 0
                 break
         # If there is winner, return massively big score.
-        if winner:
+        if (winner != 0):
             return 10000 if (winner > 0) else -10000
 
 
@@ -102,12 +121,15 @@ while(testInst.game_cnt < 10):
     board = testInst.run_game()
     print(board)
 
+print("---------------------------------")
+print("---------------------------------")
+
 for board in testInst.boards_list:
     print(board)
     game_sample = Game()
     game_sample.import_board(board, 'W')
     game_sample.print_board()
-    print("Score of this board is " + str(testInst.score_board(board)) + "\n")
+    print("Score of this board is " + str(testInst.score_board(board)) + ".\n")
 
 
 # Testing board scoring.
