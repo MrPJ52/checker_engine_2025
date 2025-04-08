@@ -19,15 +19,15 @@ class ScoreFunction:
         # Set max turn count.
         turn_cnt_max = 50
         # Play until one game ends or hit specific turn count.
-        while (not(newGame.game_is_over or turn_cnt >= turn_cnt_max)):
+        while (True):
             P1.playTurn(game=newGame)
-            if newGame.game_is_over:
+            if newGame.game_is_over or turn_cnt >= turn_cnt_max:
                 break
             newGame.print_board()
             turn_cnt += 1
 
             P2.playTurn(game=newGame)
-            if newGame.game_is_over:
+            if newGame.game_is_over or turn_cnt >= turn_cnt_max:
                 break
             newGame.print_board()
             turn_cnt += 1
