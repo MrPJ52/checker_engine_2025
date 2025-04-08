@@ -2,11 +2,26 @@ from game import Game
 from player_bot import PlayerBot
 from time import sleep
 
+# As a first step of AI Engine,
+# I chose to use simple heuristics function and MiniMax algorithm using it.
+# After making board tree and searching method,
+# I'll make Q-Learning method: Q(s, a)
+# that means Sum of expected reward(Q) when action is taken(a) in a given situation(s).
+# In MiniMax algorithm, s is board, a is set of weights.
+# And after that, I will use deep learning to predict value of Q(s, a)
+# and update weights set.
+
+#%% ScoreFunction class.
 class ScoreFunction:
     def __init__(self):
         self.game_cnt = 0
         self.game_score_list = list()
         self.boards_list = list()
+        # Weights
+        # In case of weight of number of check or King,
+        # the notation in Game.board(1 or 2) is weight by itself.
+        self.weight_list = [1.6, 1.2, 1.2]
+        # For now, each weights means center, advanced, and left moves.
     
     def run_game(self):
         newGame = Game()
@@ -40,13 +55,6 @@ class ScoreFunction:
         return newGame.board
 
     def score_board(self, target_board:list):
-        # Weights
-        w_center = 1.6
-        w_advanced = 1.2
-        w_left_moves = 1.2
-        # In case of weight of number of check or King,
-        # the notation in Game.board(1 or 2) is weight by itself.
-
         score_sum = 0
 
         # To find if there are only one side pieces,
@@ -83,10 +91,10 @@ class ScoreFunction:
 
             # Judge center
             if (2 <= x) and (x <= 5) and (2 <= y) and (y <= 5):
-                tile *= w_center
+                tile *= self.weight_list[0]
             # Judge advanced: only for men, not for king.
             if (((y >= 6) and (tile == -1)) or ((y <= 1) and (tile == 1))):
-                tile *= w_advanced
+                tile *= self.weight_list[1]
             # Judge left moves
             # TODO: Connect with Game.find_moves() to get weight of left moves.
             
