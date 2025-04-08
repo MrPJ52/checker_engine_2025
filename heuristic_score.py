@@ -49,29 +49,10 @@ class ScoreFunction:
 
         score_sum = 0
 
-        #TODO: Fix bug. When there's only black pieces,
-        # it sometimes doesn't catch game is over.
-        # Below is example output.
-        '''
-        [-1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, -1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        Check in position[7, 2] has been promoted to King.
-
-            0   1   2   3   4   5   6   7
-        0 |__||-1||__||__||__||__||__||__|
-        1 |-1||__||__||__||__||__||__||__|
-        2 |__||__||__||__||__||__||__||-2|        
-        3 |__||__||__||__||__||__||__||__|        
-        4 |__||__||__||-1||__||__||__||-1|        
-        5 |__||__||__||__||__||__||__||__|        
-        6 |__||__||__||__||__||__||__||__|        
-        7 |__||__||__||__||__||__||__||__|        
-        Score of this board is -6.6.
-        '''
-
         # To find if there are only one side pieces,
         # Check if every pieces are in the same side with very first piece.
         first_tile = target_board[0]
-        winner = 0
+        winner = first_tile
         for i in range(len(target_board)):
             # Find first tile that is NOT 0 (which means there is a piece)
             if first_tile == 0:
@@ -117,6 +98,7 @@ class ScoreFunction:
 # Debugging.
 testInst = ScoreFunction()
 
+# Create games and score them.
 while(testInst.game_cnt < 10):
     board = testInst.run_game()
     print(board)
@@ -133,7 +115,6 @@ for board in testInst.boards_list:
 
 
 # Testing board scoring.
-# board = [0 for _ in range(32)]
-# board[3] = 1
+# board = [-1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, -1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 # print(board)
 # print(testInst.score_board(board))
