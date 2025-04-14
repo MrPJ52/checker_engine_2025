@@ -23,6 +23,7 @@ class ScoreFunction:
         self.weight_list = [1.6, 1.2, 1.2]
         # For now, each weights means center, advanced, and left moves.
     
+    # TODO: Running function have to be separated from ScoreFunction.
     def run_game(self):
         newGame = Game()
         # Set sleep time of Game shorter.
