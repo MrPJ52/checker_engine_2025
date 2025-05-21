@@ -7,7 +7,7 @@ class PlayerBot:
     def __init__(self, Side):
         self.side = Side
 
-    #%% playTurn() method.
+    # playTurn() method.
     # Make AI actually play a turn, including attacking and moving.
     # Parameter: Game() instance
     def playTurn(self, game:Game):
@@ -39,7 +39,7 @@ class PlayerBot:
 
         return
 
-    #%% makeMove() method.
+    # makeMove() method.
     # Make AI randomly move in Game instance.
     def makeMove(self, movable_dict:dict, game:Game):
         # Randomly pick a mover and its able move
@@ -51,7 +51,7 @@ class PlayerBot:
         
         return
 
-    #%% makeAttack() method.
+    # makeAttack() method.
     # Make AI actually attack.
     def makeAttack(self, attackable_dict:dict, game:Game):
         # Randomly pick a attacker and its target

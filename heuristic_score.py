@@ -9,20 +9,26 @@ from time import sleep
 # that means Sum of expected reward(Q) when action is taken(a) in a given situation(s).
 # In MiniMax algorithm, s is board, a is set of weights.
 # And after that, I will use deep learning to predict value of Q(s, a)
-# and update weights set.
+# and update NN's weights.
 
 #%% ScoreFunction class.
 class ScoreFunction:
+    # Weights: set as static variance of ScoreFuction
+    # In case of weight of number of check or King,
+    # the notation in Game.board(1 or 2) is weight by itself.
+    weight_list = [1.6, 1.2, 1.2]
+    # For now, each weights means center, advanced, and left moves.
+
+    # Constructor
     def __init__(self):
         self.game_cnt = 0
         self.game_score_list = list()
         self.boards_list = list()
-        # Weights
-        # In case of weight of number of check or King,
-        # the notation in Game.board(1 or 2) is weight by itself.
-        self.weight_list = [1.6, 1.2, 1.2]
-        # For now, each weights means center, advanced, and left moves.
-    
+        
+    # run_game() method.
+    # run a whole game with both side playerBot.
+    # Parameter: None
+    # Return: board in form of 1D array
     def run_game(self):
         newGame = Game()
         # Set sleep time of Game shorter.
@@ -54,7 +60,12 @@ class ScoreFunction:
         self.boards_list.append(newGame.board)
         return newGame.board
 
-    def score_board(self, target_board:list):
+    # score_board() static method.
+    # Gets board in form of 1D array and score it.
+    # Parameter: board in form of 1D array
+    # Return: score of the board
+    @staticmethod
+    def score_board(target_board:list):
         score_sum = 0
 
         # To find if there are only one side pieces,
@@ -91,10 +102,10 @@ class ScoreFunction:
 
             # Judge center
             if (2 <= x) and (x <= 5) and (2 <= y) and (y <= 5):
-                tile *= self.weight_list[0]
+                tile *= ScoreFunction.weight_list[0]
             # Judge advanced: only for men, not for king.
             if (((y >= 6) and (tile == -1)) or ((y <= 1) and (tile == 1))):
-                tile *= self.weight_list[1]
+                tile *= ScoreFunction.weight_list[1]
             # Judge left moves
             # TODO: Connect with Game.find_moves() to get weight of left moves.
             
@@ -107,7 +118,7 @@ class ScoreFunction:
 testInst = ScoreFunction()
 
 # Create games and score them.
-while(testInst.game_cnt < 10):
+while(testInst.game_cnt < 3):
     board = testInst.run_game()
     print(board)
 
@@ -119,7 +130,7 @@ for board in testInst.boards_list:
     game_sample = Game()
     game_sample.import_board(board, 'W')
     game_sample.print_board()
-    print("Score of this board is " + str(testInst.score_board(board)) + ".\n")
+    print("Score of this board is " + str(ScoreFunction.score_board(board)) + ".\n")
 
 
 # Testing board scoring.
