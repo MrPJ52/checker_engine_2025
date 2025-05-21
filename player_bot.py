@@ -1,7 +1,8 @@
 from random import choice
 from game import Game
 
-#%% PlayerBot
+#%% PlayerBot class: Bot that plays game automatically.
+# Basically this bot chooses its next move randomly.
 class PlayerBot:
     # constructor
     def __init__(self, Side):
@@ -39,7 +40,7 @@ class PlayerBot:
 
         return
 
-    # makeMove() method.
+    # makeMove() static method.
     # Make AI randomly move in Game instance.
     def makeMove(self, movable_dict:dict, game:Game):
         # Randomly pick a mover and its able move
@@ -51,7 +52,7 @@ class PlayerBot:
         
         return
 
-    # makeAttack() method.
+    # makeAttack() static method.
     # Make AI actually attack.
     def makeAttack(self, attackable_dict:dict, game:Game):
         # Randomly pick a attacker and its target
