@@ -42,7 +42,8 @@ class PlayerBot:
 
     # makeMove() static method.
     # Make AI randomly move in Game instance.
-    def makeMove(self, movable_dict:dict, game:Game):
+    @staticmethod
+    def makeMove(movable_dict:dict, game:Game):
         # Randomly pick a mover and its able move
         moverPos = choice(tuple(movable_dict.keys()))
         destinedPos = choice(movable_dict[moverPos])
@@ -54,7 +55,8 @@ class PlayerBot:
 
     # makeAttack() static method.
     # Make AI actually attack.
-    def makeAttack(self, attackable_dict:dict, game:Game):
+    @staticmethod
+    def makeAttack(attackable_dict:dict, game:Game):
         # Randomly pick a attacker and its target
         atkPos = choice(tuple(attackable_dict.keys()))
         targetPos = str(choice(attackable_dict[atkPos]))
