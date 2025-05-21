@@ -59,7 +59,7 @@ class Game:
         # Initially set board by set_board()
         self.set_board()
     
-    #%% set_board() method.
+    # set_board() method.
     # Set the board situation as 1D list, according to self.checks_list.
     def set_board(self):
         self.board = [ 0,0,0,0,
@@ -85,7 +85,7 @@ class Game:
         
         return
     
-    #%% import_board() method.
+    # import_board() method.
     # Import board in form of 1D Array.
     # Set the Game object including board according to input information.
     # Basically do the opposite to set_board().
@@ -116,7 +116,7 @@ class Game:
 
         return
 
-    #%% print_board() method.
+    # print_board() method.
     # Print board through console.
     def print_board(self):
         self.set_board()
@@ -139,7 +139,7 @@ class Game:
         return
     
     
-    #%% move_debug method.
+    # move_debug method.
     # Method to move check in any location.
     # Used to debug and test.
     def move_debug(self):
@@ -170,7 +170,7 @@ class Game:
     # After move_debug(), one attackable check ignored it.
     # Couldn't find the reason, but might be fixed later.
     
-    #%% find_targets() method.
+    # find_targets() method.
     # Find if a check has attacking target.
     # Parameter: [Position of attacker]
     def find_targets(self, checkPos:str):
@@ -194,7 +194,7 @@ class Game:
         else:
             return None
     
-    #%% get_atk_dict() method.
+    # get_atk_dict() method.
     # Find if there is any piece attacking another piece.
     def get_atk_dict(self):
         # Returns Dictionary as following:
@@ -212,7 +212,7 @@ class Game:
         
         return atk_check_dict
     
-    #%% attack_phase() method.
+    # attack_phase() method.
     # Proceed attack phase and control it.
     # Parameter: Dictionary that is result of get_atk_dict, CheckersGUI object(In tkinter_GUI.py),
     # and boolean to check player has already attacked
@@ -278,7 +278,7 @@ class Game:
         else:
             return
             
-    #%% attack() method.
+    # attack() method.
     # Move attacker and delete target.
     # Parameter: str(attacker's pos), str(target's position)
     def attack(self, atkPos:str, targetPos:str):
@@ -308,7 +308,7 @@ class Game:
         # Return movePos (position of attacker after attack)
         return movePos
 
-    #%% get_move_dict() method.
+    # get_move_dict() method.
     # Find if there is any movable space.
     def get_move_dict(self):
         # Find movable checks
@@ -335,7 +335,7 @@ class Game:
         else:
             return None
 
-    #%% move_phase() method.
+    # move_phase() method.
     # Proceed move phase and control it.
     # Parameter: return of get_move_dict()
     def move_phase(self, movable_dict):
@@ -382,7 +382,7 @@ class Game:
 
         return
     
-    #%% move() method.
+    # move() method.
     # Move check from start position to destined position.
     # Parameter: str(start position), destined position
     def move(self, startPos:str, destinedPos:list):
@@ -396,7 +396,7 @@ class Game:
 
         return
     
-    #%% check_promotion() method.
+    # check_promotion() method.
     # Find whether the check has to promote.
     # Parameter: str(position of check)
     def check_promotion(self, checkPos:str):
@@ -409,7 +409,7 @@ class Game:
         else:
             return False
 
-    #%% game_over() method.
+    # game_over() method.
     # TODO: Condition to judge game over should be updated.
     def game_over(self):
         self.game_is_over = True
@@ -420,7 +420,7 @@ class Game:
 
         return
 
-    #%% play_game() method.
+    # play_game() method.
     # Run a whole game and Returns self.board.
     def play_game(self):
         while (not self.game_is_over):
@@ -455,13 +455,13 @@ class Game:
     def draw_pieces(self):
         return
 
-# For debugging playing in this file.
+#%% For debugging playing in this file.
 # if __name__ == "__main__":
 #     myGame = Game()
 #     board = myGame.play_game()
 #     print(board)
 
-#To debug import_board().
+#%% To debug import_board().
 if __name__ == "__main__":
     myGame = Game()
     board = [0 for _ in range(32)]

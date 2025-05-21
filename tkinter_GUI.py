@@ -32,13 +32,13 @@ class CheckersGUI:
         if (inputSide == '2'):
             self.aiPlayer = list((PlayerBot('B'), PlayerBot('W')))
         elif (inputSide != '0'):
-            self.aiPlayer = PlayerBot(inputSide)
+            self.aiPlayer = [PlayerBot(inputSide)]
         
         # 1000ms after CheckersGUI instance is created,
         # start game_loop() method to run self.game
         self.root.after(self.gui_sleep_time, self.game_loop)
     
-    #%% draw_board() and draw_pieces() methods.
+    # draw_board() and draw_pieces() methods.
     def draw_board(self):
         tile_size = 50
         # Draw x-index
@@ -81,7 +81,7 @@ class CheckersGUI:
                                     font = ("Arial", 10), fill = "white", text = piece.notation, tags="pieces")
     
 
-    #%% game_loop() method.
+    # game_loop() method.
     # Implemented as recursive method to repeat the turn.
     def game_loop(self):
         # if there are two bots, call aiPlay()
@@ -103,8 +103,8 @@ class CheckersGUI:
         print(f"\nIt is {self.game.turn_player}'s turn.\n")
         # If there is AI, call methods from PlayerAI instance.
         try:
-            if (self.aiPlayer.side == self.game.turn_player):
-                self.aiPlayer.playTurn(self.game)
+            if (self.aiPlayer[0].side == self.game.turn_player):
+                self.aiPlayer[0].playTurn(self.game)
                 return self.root.after(self.gui_sleep_time, self.game_loop)
             # AttributeError will occur if there is no aiPlayer
         except:
@@ -132,7 +132,7 @@ class CheckersGUI:
         self.game.turn_player = 'W' if self.game.turn_player == 'B' else 'B'
         self.root.after(self.gui_sleep_time, self.game_loop)
     
-    #%% aiPlay() method.
+    # aiPlay() method.
     # Let bots play a whole game and show it.
     def aiPlay(self):
         # Set sleep time shorter

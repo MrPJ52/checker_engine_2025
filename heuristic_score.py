@@ -114,7 +114,7 @@ class ScoreFunction:
         
         return score_sum
 
-# Debugging.
+#%% Debugging.
 testInst = ScoreFunction()
 
 # Create games and score them.
