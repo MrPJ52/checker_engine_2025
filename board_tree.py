@@ -8,12 +8,16 @@ class BoardNod:
         self.turn_player = turn_player
         self.score = ScoreFunction.score_board(self.board_present)
 
-        # action list's length = children number
-        self.children_list = list()
+        # How children is saved: Dictionary.
+        # Dict[tuple(move/attack method, startPos, endPos)] = Node.
+        self.children_dict = dict()
+
     
     def get_children(self):
         game = Game()
         game.import_board(self.board_present, self.turn_player)
+        # Console out for debugging.
+        # game.print_board()
 
         if (game.get_atk_dict()) :
             move_dict = game.get_atk_dict()
@@ -21,11 +25,14 @@ class BoardNod:
                 for targetPos in move_dict[atkPos]:
                     game_new = deepcopy(game)
                     game_new.sleep_time = 0
-                    
-                    game_new.attack(atkPos, str(targetPos))
+
                     game_new.set_board()
+                    game_new.attack(atkPos, str(targetPos))
                     game_new.turn_player = 'W' if (game_new.turn_player == 'B') else 'B'
-                    self.children_list.append(BoardNod(game_new.board, game_new.turn_player))
+
+                    # Create key: (method, startPosition, endPosition)
+                    action = (Game.attack, atkPos, str(targetPos))
+                    self.children_dict[action] = BoardNod(game_new.board, game_new.turn_player)
 
             return
 
@@ -38,7 +45,10 @@ class BoardNod:
                 game_new.move(startPos, destinedPos)
                 game_new.set_board()
                 game_new.turn_player = 'W' if (game_new.turn_player == 'B') else 'B'
-                self.children_list.append(BoardNod(game_new.board, game_new.turn_player))
+
+                # Create Key
+                action = (Game.move, startPos, destinedPos)
+                self.children_dict[action] = BoardNod(game_new.board, game_new.turn_player)
         
         return
 
@@ -53,12 +63,12 @@ class BoardTree:
         
         # Console out for debugging.
         print("  " * depth + f"{node.turn_player}: {node.score}")
-
+        
         if (depth > targetDepth):
             return
         
         node.get_children()
-        for child in node.children_list:
+        for child in node.children_dict:
             # expand from each child
             self.expand_tree(child, depth=depth+1, targetDepth=targetDepth)
         
