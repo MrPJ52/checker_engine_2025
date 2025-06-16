@@ -330,10 +330,8 @@ class Game:
                             mover_check_dict[(str(check.pos))] = [pos_move]
         
         # Return dictionary of movable places' position
-        if mover_check_dict:
-            return mover_check_dict
-        else:
-            return None
+        return mover_check_dict
+
 
     # move_phase() method.
     # Proceed move phase and control it.

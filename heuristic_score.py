@@ -115,22 +115,23 @@ class ScoreFunction:
         return score_sum
 
 #%% Debugging.
-testInst = ScoreFunction()
+if (__name__ == "__main__"):
+    testInst = ScoreFunction()
 
-# Create games and score them.
-while(testInst.game_cnt < 3):
-    board = testInst.run_game()
-    print(board)
+    # Create games and score them.
+    while(testInst.game_cnt < 3):
+        board = testInst.run_game()
+        print(board)
 
-print("---------------------------------")
-print("---------------------------------")
+    print("---------------------------------")
+    print("---------------------------------")
 
-for board in testInst.boards_list:
-    print(board)
-    game_sample = Game()
-    game_sample.import_board(board, 'W')
-    game_sample.print_board()
-    print("Score of this board is " + str(ScoreFunction.score_board(board)) + ".\n")
+    for board in testInst.boards_list:
+        print(board)
+        game_sample = Game()
+        game_sample.import_board(board, 'W')
+        game_sample.print_board()
+        print("Score of this board is " + str(ScoreFunction.score_board(board)) + ".\n")
 
 
 # Testing board scoring.
