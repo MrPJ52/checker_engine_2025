@@ -21,7 +21,7 @@ y
 class Game:
     # initial setting
     def __init__(self):
-        self.board = [ 0,0,0,0,
+        self.board = [0,0,0,0,
                       0,0,0,0,
                       0,0,0,0,
                       0,0,0,0,
@@ -278,7 +278,7 @@ class Game:
             return self.attack_phase({str(movePos): more_targets}, GUI, True)
         else:
             return
-            
+    
     # attack() method.
     # Move attacker and delete target.
     # Parameter: str(attacker's pos), str(target's position)
@@ -317,6 +317,9 @@ class Game:
         # { str(movable checks' position) : [list of movable blanks] }
         mover_check_dict = dict()
         for check in self.checks_list.values():
+            # TODO: Create find_moves() method and separate codes below.
+            # Return each mover's possible moves as list.
+            # This is for get separated method used in scoring board.
             if check.side == self.turn_player:
                 # Check all possible moves
                 for posible_move in check.moves:

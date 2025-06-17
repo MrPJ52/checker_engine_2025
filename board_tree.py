@@ -6,7 +6,7 @@ class BoardNod:
     def __init__(self, board:list, turn_player:str):
         self.board_present = board
         self.turn_player = turn_player
-        self.score = ScoreFunction.score_board(self.board_present)
+        self.score = ScoreFunction.score_board(self.board_present, self.turn_player)
         
         # How children is saved: Dictionary.
         # Dict[tuple(move/attack method, startPos, endPos)] = Node.
@@ -17,7 +17,7 @@ class BoardNod:
         game.import_board(self.board_present, self.turn_player)
         # Console out for debugging.
         # game.print_board()
-        
+
         if (game.get_atk_dict()) :
             move_dict = game.get_atk_dict()
             for atkPos in move_dict.keys():

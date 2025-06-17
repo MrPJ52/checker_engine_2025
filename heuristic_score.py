@@ -16,8 +16,8 @@ class ScoreFunction:
     # Weights: set as static variance of ScoreFuction
     # In case of weight of number of check or King,
     # the notation in Game.board(1 or 2) is weight by itself.
-    weight_list = [1.6, 1.2, 1.2]
-    # For now, each weights means center, advanced, and left moves.
+    weight_list = [1.6, 1.4, 1.2, 1.2]
+    # For now, each weights means center(center and around), advanced, and left moves.
 
     # Constructor
     def __init__(self):
@@ -65,7 +65,7 @@ class ScoreFunction:
     # Parameter: board in form of 1D array
     # Return: score of the board
     @staticmethod
-    def score_board(target_board:list):
+    def score_board(target_board:list, turn_player:str):
         score_sum = 0
 
         # To find if there are only one side pieces,
@@ -103,11 +103,14 @@ class ScoreFunction:
             # Judge center
             if (2 <= x) and (x <= 5) and (2 <= y) and (y <= 5):
                 tile *= ScoreFunction.weight_list[0]
+            elif (1 <= x) and (x <= 6) and (1 <= y) and (y <= 6):
+                tile *= ScoreFunction.weight_list[0]
             # Judge advanced: only for men, not for king.
             if (((y >= 6) and (tile == -1)) or ((y <= 1) and (tile == 1))):
                 tile *= ScoreFunction.weight_list[1]
             # Judge left moves
-            # TODO: Connect with Game.find_moves() to get weight of left moves.
+            # TODO: Connect with Game.find_moves() to get weight of left moves.      
+            game = Game().import_board(target_board, turn_player)
             
 
             score_sum += tile
@@ -131,7 +134,7 @@ if (__name__ == "__main__"):
         game_sample = Game()
         game_sample.import_board(board, 'W')
         game_sample.print_board()
-        print("Score of this board is " + str(ScoreFunction.score_board(board)) + ".\n")
+        print("Score of this board is " + str(ScoreFunction.score_board(board, game_sample.turn_player)) + ".\n")
 
 
 # Testing board scoring.
