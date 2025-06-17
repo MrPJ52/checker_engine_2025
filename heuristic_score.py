@@ -16,7 +16,7 @@ class ScoreFunction:
     # Weights: set as static variance of ScoreFuction
     # In case of weight of number of check or King,
     # the notation in Game.board(1 or 2) is weight by itself.
-    weight_list = [1.6, 1.4, 1.2, 1.2]
+    weight_list = [1.61, 1.41, 1.21, 1.19]
     # For now, each weights means center(center and around), advanced, and left moves.
 
     # Constructor
@@ -96,9 +96,13 @@ class ScoreFunction:
         for i in range(len(target_board)):
             tile = target_board[i]
 
+            if (tile == 0):
+                continue
+
             # Convert 1D index to 2D coordination
             y = i//4
             x = ((i%4)*2 + 1) - (y%2)
+            coord = (x, y)
 
             # Judge center
             if (2 <= x) and (x <= 5) and (2 <= y) and (y <= 5):
@@ -110,8 +114,10 @@ class ScoreFunction:
                 tile *= ScoreFunction.weight_list[1]
             # Judge left moves
             # TODO: Connect with Game.find_moves() to get weight of left moves.      
-            game = Game().import_board(target_board, turn_player)
-            
+            game = Game()
+            game.import_board(target_board, turn_player)
+            if (coord in game.checks_list.keys()):
+                score_sum += len(game.find_moves(game.checks_list[coord])) * ScoreFunction.weight_list[3] * tile / abs(tile)
 
             score_sum += tile
         

@@ -86,4 +86,4 @@ if (__name__ == "__main__"):
 
     myTree = BoardTree(myRoot)
 
-    myTree.expand_tree(targetDepth=3)
+    myTree.expand_tree(targetDepth=2)

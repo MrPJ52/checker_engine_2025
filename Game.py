@@ -309,29 +309,37 @@ class Game:
         # Return movePos (position of attacker after attack)
         return movePos
 
+    # Find each Check's possible moves (NOT attack)
+    # Parameter: Check instance
+    # Return: list of tuple(positions of destinations)
+    def find_moves(self, check:Check):
+        destination_list = list()
+        for posible_move in check.moves:
+            pos_move = tuple([check.pos[i] + posible_move[i] for i in range(2)])
+
+            # Check if pos_move is empty and not out of bound
+            if (not (pos_move in self.checks_list.keys() )) \
+                and (0 <= pos_move[0] <= 7) and (0 <= pos_move[1] <= 7):
+                destination_list.append(pos_move)
+        
+        return destination_list
+
     # get_move_dict() method.
     # Find if there is any movable space.
     def get_move_dict(self):
         # Find movable checks
         # dictionary as following:
-        # { str(movable checks' position) : [list of movable blanks] }
+        # { tuple(movable checks' position) : [list of movable blanks] }
         mover_check_dict = dict()
         for check in self.checks_list.values():
-            # TODO: Create find_moves() method and separate codes below.
-            # Return each mover's possible moves as list.
-            # This is for get separated method used in scoring board.
             if check.side == self.turn_player:
                 # Check all possible moves
-                for posible_move in check.moves:
-                    pos_move = tuple([check.pos[i] + posible_move[i] for i in range(2)])
-
-                    # Check if pos_move is empty and not out of bound
-                    if (not (pos_move in self.checks_list.keys() )) \
-                    and (0 <= pos_move[0] <= 7) and (0 <= pos_move[1] <= 7):
-                        try:
-                            mover_check_dict[tuple(check.pos)].append(pos_move)
-                        except:
-                            mover_check_dict[tuple(check.pos)] = [pos_move]
+                # TODO: Create find_moves() method and separate codes below.
+                # Return each mover's possible moves as list.
+                # This is for get separated method used in scoring board.
+                moves_list = self.find_moves(check)
+                if (moves_list):
+                    mover_check_dict[tuple(check.pos)] = moves_list
         
         # Return dictionary of movable places' position
         return mover_check_dict
