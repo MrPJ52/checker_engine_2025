@@ -7,18 +7,17 @@ class BoardNod:
         self.board_present = board
         self.turn_player = turn_player
         self.score = ScoreFunction.score_board(self.board_present)
-
+        
         # How children is saved: Dictionary.
         # Dict[tuple(move/attack method, startPos, endPos)] = Node.
         self.children_dict = dict()
-
     
     def get_children(self):
         game = Game()
         game.import_board(self.board_present, self.turn_player)
         # Console out for debugging.
         # game.print_board()
-
+        
         if (game.get_atk_dict()) :
             move_dict = game.get_atk_dict()
             for atkPos in move_dict.keys():
@@ -61,16 +60,16 @@ class BoardTree:
         if (node == None):
             node = self.root
         
-        # Console out for debugging.
-        print("  " * depth + f"{node.turn_player}: {node.score}")
-        
         if (depth > targetDepth):
             return
         
         node.get_children()
-        for child in node.children_dict.values():
+        for key in node.children_dict.keys():
+            # Console out for debugging.
+            print("--" * depth + f"{node.children_dict[key].turn_player}, {key[0].__name__}, {key[1:]}: {node.children_dict[key].score:.4f}")
+
             # expand from each child
-            self.expand_tree(child, depth=depth+1, targetDepth=targetDepth)
+            self.expand_tree(node.children_dict[key], depth=depth+1, targetDepth=targetDepth)
         
         return
     
@@ -79,6 +78,7 @@ class BoardTree:
     def find_best(self):
         pass
 
+
 # Debugging.
 if (__name__ == "__main__"):
     myGame = Game()
@@ -86,4 +86,4 @@ if (__name__ == "__main__"):
 
     myTree = BoardTree(myRoot)
 
-    myTree.expand_tree(targetDepth=4)
+    myTree.expand_tree(targetDepth=3)
