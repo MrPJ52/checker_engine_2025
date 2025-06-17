@@ -36,6 +36,7 @@ class Game:
         # checks_list = { str([x, y]) : Check instance }
         # Can act as following:
         # keys() = list of checks' position, values() = list of actual pieces
+        # TODO: Change the keys into tuple: doesn't need to parce str into list.
         self.checks_list = dict()
 
         # Create Checks for normal games

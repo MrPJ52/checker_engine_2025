@@ -31,7 +31,7 @@ class BoardNod:
                     game_new.turn_player = 'W' if (game_new.turn_player == 'B') else 'B'
 
                     # Create key: (method, startPosition, endPosition)
-                    action = (Game.attack, atkPos, str(targetPos))
+                    action = tuple([Game.attack, atkPos, str(targetPos)])
                     self.children_dict[action] = BoardNod(game_new.board, game_new.turn_player)
 
             return
@@ -47,7 +47,7 @@ class BoardNod:
                 game_new.turn_player = 'W' if (game_new.turn_player == 'B') else 'B'
 
                 # Create Key
-                action = (Game.move, startPos, destinedPos)
+                action = tuple([Game.move, startPos, destinedPos])
                 self.children_dict[action] = BoardNod(game_new.board, game_new.turn_player)
         
         return
@@ -75,6 +75,7 @@ class BoardTree:
         return
     
     # TODO: Make function to choose min/max score nod among a nod's children.
+    # May need DFS.
     def find_best(self):
         pass
 
