@@ -42,11 +42,11 @@ class Game:
         # Create Checks for normal games
         for x in range(0, 8, 2):
             for y in range(3):
-                self.checks_list[str([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
+                self.checks_list[tuple([x+(1-y%2), y])] = Check([x+(1-y%2), y], "B")
         
         for x in range(0, 8, 2):
             for y in range(3):
-                self.checks_list[str([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
+                self.checks_list[tuple([x+(y%2), 7-y])] = Check([x+(y%2), 7-y], "W")
         
         # Create Checks for debugging
         # self.checks_list[str([1, 0])] = Check([1, 0], "B")
@@ -111,9 +111,9 @@ class Game:
             side = 'B' if tile < 0 else 'W'
             pos = [x, y]
             if (tile == 2 or tile == -2):
-                self.checks_list[str(pos)] = King(pos, side)
+                self.checks_list[tuple(pos)] = King(pos, side)
             else:
-                self.checks_list[str(pos)] = Check(pos, side)
+                self.checks_list[tuple(pos)] = Check(pos, side)
 
         return
 
@@ -146,8 +146,8 @@ class Game:
     def move_debug(self):
         print("Initiate debug move. If you want to skip this turn, enter SKIP.")
         try:
-            pos_start = str(list(map(int, input("Position of check you want to move (input as x,y): ").split(","))))
-            pos_target = list(map(int, input("Position of tile you want to move to (input as x,y): ").split(",")))
+            pos_start = tuple(map(int, input("Position of check you want to move (input as x,y): ").split(",")))
+            pos_target = tuple(map(int, input("Position of tile you want to move to (input as x,y): ").split(",")))
         except:
             return
 
@@ -158,9 +158,9 @@ class Game:
             sleep(self.sleep_time)
 
             # Delete original_position:check and add new_position:check
-            self.checks_list[str(pos_target)] = self.checks_list.pop(pos_start)
+            self.checks_list[pos_target] = self.checks_list.pop(pos_start)
             # Check if it is promoted
-            self.check_promotion(str(pos_target))
+            self.check_promotion(pos_target)
             # if moved, end the method
             return
         
@@ -173,23 +173,23 @@ class Game:
     
     # find_targets() method.
     # Find if a check has attacking target.
-    # Parameter: [Position of attacker]
-    def find_targets(self, checkPos:str):
+    # Parameter: Tuple of Position of attacker
+    def find_targets(self, checkPos:tuple):
         check = self.checks_list[checkPos]
         target_list = list()
         for posible_move in check.moves:
-            pos_atked = [check.pos[i] + posible_move[i] for i in range(2)]
+            pos_atked = tuple([check.pos[i] + posible_move[i] for i in range(2)])
             try:
                 # Check if there is an enemy check in pos_atked
                 # and the position across the enemy is empty or out of bound
-                if (self.checks_list[str(pos_atked)].side != check.side) \
-                and (str([check.pos[0] + 2*posible_move[0], check.pos[1] + 2*posible_move[1]]) not in self.checks_list.keys()) \
+                if (self.checks_list[pos_atked].side != check.side) \
+                and (tuple([check.pos[0] + 2*posible_move[0], check.pos[1] + 2*posible_move[1]]) not in self.checks_list.keys()) \
                 and (0 <= check.pos[0] + 2*posible_move[0] <= 7) and (0 <= check.pos[1] + 2*posible_move[1] <= 7):
                     target_list.append(pos_atked)
             except:
                 pass
 
-        # Return [list of [position of target]]
+        # Return [list of [Tuple of position of target]]
         if target_list:
             return target_list
         else:
@@ -198,19 +198,19 @@ class Game:
     # get_atk_dict() method.
     # Find if there is any piece attacking another piece.
     def get_atk_dict(self):
-        # Returns Dictionary as following:
-        # { str(Position of attacker): [list of str(target position)] }
         atk_check_dict = dict()
         for check in self.checks_list.values():
             if check.side == self.turn_player:
-                targets = self.find_targets(str(check.pos))
+                targets = self.find_targets(tuple(check.pos))
                 if targets:
                     try:
                         for target in targets:
-                            atk_check_dict[(str(check.pos))].append(str(target))
+                            atk_check_dict[tuple(check.pos)].append(target)
                     except:
-                        atk_check_dict[(str(check.pos))] = targets
+                        atk_check_dict[tuple(check.pos)] = targets
         
+        # Returns Dictionary as following:
+        # { str(Position of attacker): [list of tuple(target position)] }
         return atk_check_dict
     
     # attack_phase() method.
@@ -257,7 +257,7 @@ class Game:
         sleep(self.sleep_time)
 
         # Call attack() method and get return value
-        movePos = self.attack(atkPos=atkPos, targetPos=str(targetPos))
+        movePos = self.attack(atkPos=atkPos, targetPos=targetPos)
 
         # print board so that user can notice how that moved
         self.print_board()
@@ -271,7 +271,7 @@ class Game:
         # call find_targets(position of attacker) to find if there is more target be able to attack.
         # if target found, return attack_phase({ str(attacker's position) : [list of its targets] }, True)
         # if no target was found, end attack_phase()
-        more_targets = self.find_targets(str(movePos))
+        more_targets = self.find_targets(movePos)
         if more_targets:
             GUI.draw_pieces()
             sleep(self.sleep_time)
@@ -282,15 +282,15 @@ class Game:
     # attack() method.
     # Move attacker and delete target.
     # Parameter: str(attacker's pos), str(target's position)
-    def attack(self, atkPos:str, targetPos:str):
+    def attack(self, atkPos:tuple, targetPos:tuple):
         # Move attacker's position
         for possible_move in self.checks_list[atkPos].moves:
-            if str([self.checks_list[atkPos].pos[i] + possible_move[i] for i in range(2)]) == targetPos:
-                movePos = [self.checks_list[atkPos].pos[i] + 2*possible_move[i] for i in range(2)]
+            if tuple([self.checks_list[atkPos].pos[i] + possible_move[i] for i in range(2)]) == targetPos:
+                movePos = tuple([self.checks_list[atkPos].pos[i] + 2*possible_move[i] for i in range(2)])
                 break
 
-        self.checks_list[str(movePos)] = self.checks_list.pop(atkPos)
-        self.checks_list[str(movePos)].move(movePos)
+        self.checks_list[movePos] = self.checks_list.pop(atkPos)
+        self.checks_list[movePos].move(movePos)
         sleep(self.sleep_time)
 
         # Call target.captured() method of target to print in console, and delete target
@@ -303,7 +303,7 @@ class Game:
 
         # check if the attacker has to be promoted
         # if promoted, end attack_phase()
-        if self.check_promotion(str(movePos)):
+        if self.check_promotion(movePos):
             return movePos
 
         # Return movePos (position of attacker after attack)
@@ -320,15 +320,15 @@ class Game:
             if check.side == self.turn_player:
                 # Check all possible moves
                 for posible_move in check.moves:
-                    pos_move = [check.pos[i] + posible_move[i] for i in range(2)]
+                    pos_move = tuple([check.pos[i] + posible_move[i] for i in range(2)])
 
                     # Check if pos_move is empty and not out of bound
-                    if (not (str(pos_move) in self.checks_list.keys() )) \
+                    if (not (pos_move in self.checks_list.keys() )) \
                     and (0 <= pos_move[0] <= 7) and (0 <= pos_move[1] <= 7):
                         try:
-                            mover_check_dict[(str(check.pos))].append(pos_move)
+                            mover_check_dict[tuple(check.pos)].append(pos_move)
                         except:
-                            mover_check_dict[(str(check.pos))] = [pos_move]
+                            mover_check_dict[tuple(check.pos)] = [pos_move]
         
         # Return dictionary of movable places' position
         return mover_check_dict
@@ -337,7 +337,7 @@ class Game:
     # move_phase() method.
     # Proceed move phase and control it.
     # Parameter: return of get_move_dict()
-    def move_phase(self, movable_dict):
+    def move_phase(self, movable_dict:dict):
         #if there is no move possible, end the game
         if not(movable_dict):
             self.game_over()
@@ -384,21 +384,21 @@ class Game:
     # move() method.
     # Move check from start position to destined position.
     # Parameter: str(start position), destined position
-    def move(self, startPos:str, destinedPos:list):
+    def move(self, startPos:tuple, destinedPos:tuple):
         self.checks_list[startPos].move(destinedPos)
-        self.checks_list[str(destinedPos)] = self.checks_list.pop(startPos)
+        self.checks_list[destinedPos] = self.checks_list.pop(startPos)
 
         sleep(self.sleep_time)
 
         # check if the mover has to be promoted
-        self.check_promotion(str(destinedPos))
+        self.check_promotion(destinedPos)
 
         return
     
     # check_promotion() method.
     # Find whether the check has to promote.
     # Parameter: str(position of check)
-    def check_promotion(self, checkPos:str):
+    def check_promotion(self, checkPos:tuple):
         if (self.checks_list[checkPos].side == "B" and self.checks_list[checkPos].pos[1] == 7) \
             or (self.checks_list[checkPos].side == "W" and self.checks_list[checkPos].pos[1] == 0):
             # Promotion : Create a King in the same position and delete original Check
@@ -466,6 +466,15 @@ if __name__ == "__main__":
     board = [0 for _ in range(32)]
     board[8] = 1
     board[23] = -1
+    board = [ -1,-1,-1,-1,
+            -1,-1,-1,-1,
+            -1,-1,-1,-1,
+            0,0,0,0,
+            0,0,0,0,
+            1,1,1,1,
+            1,1,1,1,
+            1,1,1,1]
+
     print(board)
     myGame.import_board(board_in=board, turn_player_in='W')
     result = myGame.play_game()

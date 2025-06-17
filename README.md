@@ -2,11 +2,9 @@
 
 Checker Engine Project. A practice to proceed itself as chess machine later.
 
-Last Update: 16th JUN, 2025
+Last Update: 17th JUN, 2025
 
 TODO:
-
-0. Optimazation: In Game class, parameter and return type of methods are not the same and it can occur mistake. Unify their type.
 
 1. Promotion while attack and chain attack needs to be moved in attack() method, so that Bots can do the same.
 

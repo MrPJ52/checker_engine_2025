@@ -27,11 +27,11 @@ class BoardNod:
                     game_new.sleep_time = 0
 
                     game_new.set_board()
-                    game_new.attack(atkPos, str(targetPos))
+                    game_new.attack(atkPos, targetPos)
                     game_new.turn_player = 'W' if (game_new.turn_player == 'B') else 'B'
 
                     # Create key: (method, startPosition, endPosition)
-                    action = tuple([Game.attack, atkPos, str(targetPos)])
+                    action = tuple([Game.attack, atkPos, targetPos])
                     self.children_dict[action] = BoardNod(game_new.board, game_new.turn_player)
 
             return
@@ -68,7 +68,7 @@ class BoardTree:
             return
         
         node.get_children()
-        for child in node.children_dict:
+        for child in node.children_dict.values():
             # expand from each child
             self.expand_tree(child, depth=depth+1, targetDepth=targetDepth)
         
@@ -86,4 +86,4 @@ if (__name__ == "__main__"):
 
     myTree = BoardTree(myRoot)
 
-    myTree.expand_tree(targetDepth=2)
+    myTree.expand_tree(targetDepth=4)

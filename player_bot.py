@@ -59,7 +59,7 @@ class PlayerBot:
     def makeAttack(attackable_dict:dict, game:Game):
         # Randomly pick a attacker and its target
         atkPos = choice(tuple(attackable_dict.keys()))
-        targetPos = str(choice(attackable_dict[atkPos]))
+        targetPos = choice(attackable_dict[atkPos])
 
         print(f"{atkPos} attacks {targetPos} .")
 
