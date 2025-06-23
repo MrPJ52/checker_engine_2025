@@ -15,7 +15,7 @@ class PlayerBot:
         # Re-set board
         game.set_board()
 
-        print(f"AI {self.side} player is playing...")
+        print(f"Bot {self.side} player is playing...")
         # Find if there is any attacking checks
         # If there is, attack
         attackable_dict = game.get_atk_dict()

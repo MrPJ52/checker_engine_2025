@@ -26,10 +26,10 @@ class ScoreFunction:
         self.boards_list = list()
         
     # run_game() method.
-    # run a whole game with both side playerBot.
-    # Parameter: None
-    # Return: board in form of 1D array
-    def run_game(self):
+    # Generate a whole game run by both side playerBot.
+    # Parameter: Max turn count.
+    # Return: generated Game object
+    def run_game(self, turn_cnt_max:int):
         newGame = Game()
         # Set sleep time of Game shorter.
         newGame.sleep_time = 0
@@ -37,28 +37,28 @@ class ScoreFunction:
         P2 = PlayerBot('W')
 
         turn_cnt = 0
-        # Set max turn count.
-        turn_cnt_max = 50
-        # Play until one game ends or hit specific turn count.
-        while (True):
-            P1.playTurn(game=newGame)
-            if newGame.game_is_over or turn_cnt >= turn_cnt_max:
-                break
-            newGame.print_board()
-            turn_cnt += 1
 
-            P2.playTurn(game=newGame)
-            if newGame.game_is_over or turn_cnt >= turn_cnt_max:
-                break
-            newGame.print_board()
-            turn_cnt += 1
+        # Play until one game ends or hit specific turn count.
+        while (turn_cnt < turn_cnt_max):
+            if (turn_cnt % 2 - 1):
+                P1.playTurn(game=newGame)
+                if newGame.game_is_over:
+                    break
+                newGame.print_board()
+                turn_cnt += 1
+            else:
+                P2.playTurn(game=newGame)
+                if newGame.game_is_over:
+                    break
+                newGame.print_board()
+                turn_cnt += 1
 
         self.game_cnt += 1
         print(f"Took {turn_cnt} turns.")
         sleep(1)
 
         self.boards_list.append(newGame.board)
-        return newGame.board
+        return newGame
 
     # score_board() static method.
     # Gets board in form of 1D array and score it.
@@ -128,8 +128,8 @@ if (__name__ == "__main__"):
     testInst = ScoreFunction()
 
     # Create games and score them.
-    while(testInst.game_cnt < 3):
-        board = testInst.run_game()
+    while(testInst.game_cnt < 1):
+        board = testInst.run_game(19).board
         print(board)
 
     print("---------------------------------")

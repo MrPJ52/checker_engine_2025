@@ -66,24 +66,60 @@ class BoardTree:
         node.get_children()
         for key in node.children_dict.keys():
             # Console out for debugging.
-            print("--" * depth + f"{node.children_dict[key].turn_player}, {key[0].__name__}, {key[1:]}: {node.children_dict[key].score:.4f}")
+            # print("--" * depth + f"{node.children_dict[key].turn_player}, {key[0].__name__}, {key[1:]}: {node.children_dict[key].score:.4f}")
 
             # expand from each child
             self.expand_tree(node.children_dict[key], depth=depth+1, targetDepth=targetDepth)
         
         return
     
-    # TODO: Make function to choose min/max score nod among a nod's children.
-    # May need DFS.
+    # TODO: Maybe needed to be optimized.
+    # Return: tuple of action that maximize score and result node.
     def find_best(self):
-        pass
+        # If self.root has no child, it means it is leaf node.
+        # Return self.root as result.
+        if (not self.root.children_dict):
+            return ((Game.move, (0, 0), (0, 0)), self.root)
 
+        visited = list()
+        for action, node in self.root.children_dict.items():
+            if (action, node) not in visited:
+                visited.append((action, node))
+                node.score += BoardTree(node).find_best()[1].score
+        
+        result = visited[0]
+        max_score = 0
+        for set in visited:
+            node = set[1]
+            # If white turn, find the biggest scored node
+            if self.root.turn_player == 'W':
+                if max_score < node.score:
+                    result = set
+                    max_score = node.score
+                continue
+            # If black turn, find the smallest scored node
+            else:
+                if max_score > node.score:
+                    result = set
+                    max_score = node.score
+                continue
+        
+        return result
 
 # Debugging.
 if (__name__ == "__main__"):
-    myGame = Game()
+    gameGenerator = ScoreFunction()
+    myGame = gameGenerator.run_game(10)
     myRoot = BoardNod(myGame.board, myGame.turn_player)
 
     myTree = BoardTree(myRoot)
 
     myTree.expand_tree(targetDepth=2)
+    
+    best_set = myTree.find_best()
+    print(best_set[0][0].__name__, end=': ')
+    print(best_set[0][1:])
+    print(best_set[1].score)
+
+    best_set[0][0](myGame, best_set[0][1], best_set[0][2])
+    myGame.print_board()
