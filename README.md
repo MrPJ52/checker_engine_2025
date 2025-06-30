@@ -2,7 +2,7 @@
 
 Checker Engine Project. A practice to proceed itself as chess machine later.
 
-Last Update: 23th JUN, 2025
+Last Update: 30th JUN, 2025
 
 TODO:
 

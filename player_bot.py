@@ -1,6 +1,7 @@
 from random import choice
 from game import Game
 
+
 #%% PlayerBot class: Bot that plays game automatically.
 # Basically this bot chooses its next move randomly.
 class PlayerBot:
